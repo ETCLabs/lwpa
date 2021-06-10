@@ -48,7 +48,7 @@ TEST(etcpal_cpp_thread, params_constructor_works)
   TEST_ASSERT_EQUAL_UINT(thrd.priority(), 42u);
   TEST_ASSERT_EQUAL_UINT(thrd.stack_size(), 1234u);
   TEST_ASSERT_EQUAL_STRING(thrd.name(), "test_thread");
-  TEST_ASSERT_EQUAL_PTR(thrd.platform_data(), nullptr);
+  TEST_ASSERT_EQUAL_PTR(thrd.platform_data(), nullptr); // NOLINT(cppcoreguidelines-pro-type-cstyle-cast)
 
   // Now test a thread that actually runs
   etcpal::Thread thrd2(ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test_thread");
@@ -155,8 +155,8 @@ TEST(etcpal_cpp_thread, move_constructor_works)
 
   etcpal::Thread thrd2(std::move(thrd));
   // thrd should be in a default-constructed state
-  TEST_ASSERT_FALSE(thrd.joinable());
-  TEST_ASSERT_EQUAL_STRING(thrd.name(), ETCPAL_THREAD_DEFAULT_NAME);
+  TEST_ASSERT_FALSE(thrd.joinable()); // NOLINT(clang-analyzer-cplusplus.Move)
+  TEST_ASSERT_EQUAL_STRING(thrd.name(), ETCPAL_THREAD_DEFAULT_NAME); // NOLINT(clang-analyzer-cplusplus.Move)
 
   // thrd2 should be running and have thrd's parameters
   TEST_ASSERT_TRUE(thrd2.joinable());
@@ -179,8 +179,8 @@ TEST(etcpal_cpp_thread, move_assignment_operator_works)
 
   etcpal::Thread thrd2 = std::move(thrd);
   // thrd should be in a default-constructed state
-  TEST_ASSERT_FALSE(thrd.joinable());
-  TEST_ASSERT_EQUAL_STRING(thrd.name(), ETCPAL_THREAD_DEFAULT_NAME);
+  TEST_ASSERT_FALSE(thrd.joinable()); // NOLINT(clang-analyzer-cplusplus.Move)
+  TEST_ASSERT_EQUAL_STRING(thrd.name(), ETCPAL_THREAD_DEFAULT_NAME); // NOLINT(clang-analyzer-cplusplus.Move)
 
   // thrd2 should be running and have thrd's parameters
   TEST_ASSERT_TRUE(thrd2.joinable());

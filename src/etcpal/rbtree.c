@@ -300,14 +300,13 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
     else
     {
       EtcPalRbNode  head = {0}; /* False tree root */
-      EtcPalRbNode *g, *t;      /* Grandparent & parent */
-      EtcPalRbNode *p, *q;      /* Iterator & parent */
+      /* Grandparent & parent */
+      EtcPalRbNode *g = NULL;
+      EtcPalRbNode *t = &head;
+      /* Iterator & parent */
+      EtcPalRbNode *p = NULL;
+      EtcPalRbNode *q = t->link[1] = self->root;
       int           dir = 0, last = 0;
-
-      /* Set up our helpers */
-      t = &head;
-      g = p = NULL;
-      q = t->link[1] = self->root;
 
       /* Search down the tree for a place to insert */
       while (1)
@@ -413,11 +412,6 @@ etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, const void* value)
  */
 etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* value, EtcPalRbTreeNodeFunc node_cb)
 {
-  EtcPalRbNode  head = {0}; /* False tree root */
-  EtcPalRbNode *q, *p, *g;  /* Helpers */
-  EtcPalRbNode* f = NULL;   /* Found item */
-  int           dir = 1;
-
   if (!self)
     return kEtcPalErrInvalid;
   if (self->root == NULL)
@@ -428,10 +422,15 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
   if (NULL == etcpal_rbtree_find(self, value))
     return kEtcPalErrNotFound;
 
-  /* Set up our helpers */
-  q = &head;
-  g = p = NULL;
+  EtcPalRbNode  head = {0}; /* False tree root */
+  /* Helpers */
+  EtcPalRbNode* q = &head;
+  EtcPalRbNode* g = NULL;
+  EtcPalRbNode* p = NULL;
+  EtcPalRbNode* f = NULL;   /* Found item */
   q->link[1] = self->root;
+
+  int           dir = 1;
 
   /* Search and push a red node down to fix red violations as we go */
   while (q->link[dir] != NULL)
@@ -607,8 +606,6 @@ size_t etcpal_rbtree_size(EtcPalRbTree* self)
  */
 int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
 {
-  int lh, rh;
-
   if (root == NULL)
   {
     return 1;
@@ -627,8 +624,8 @@ int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
       }
     }
 
-    lh = etcpal_rbtree_test(self, ln);
-    rh = etcpal_rbtree_test(self, rn);
+    int lh = etcpal_rbtree_test(self, ln);
+    int rh = etcpal_rbtree_test(self, rn);
 
     /* Invalid binary search tree */
     if ((ln != NULL && self->cmp(self, ln->value, root->value) >= 0) ||

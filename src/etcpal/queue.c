@@ -348,10 +348,8 @@ size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
-  size_t elements;
-
   lock(id);
-  elements = id->max_queue_size - id->queue_size;
+  size_t elements = id->max_queue_size - id->queue_size;
   unlock(id);
 
   return elements;

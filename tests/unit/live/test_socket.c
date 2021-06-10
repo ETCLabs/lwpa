@@ -71,14 +71,14 @@ TEST(etcpal_socket, sockopts)
 
 TEST(etcpal_socket, blocking_state_is_consistent)
 {
-  etcpal_socket_t sock;
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_STREAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Set the socket to non-blocking, make sure it reads as non-blocking
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setblocking(sock, false));
-  bool           is_blocking;
+  bool           is_blocking = true;
   etcpal_error_t gb_result = etcpal_getblocking(sock, &is_blocking);
 
   // Special case - this function isn't implemented on all platforms, so we abort this test
@@ -110,7 +110,7 @@ TEST(etcpal_socket, poll_invalid_calls_fail)
   EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrNoSockets, etcpal_poll_wait(&context, &event, 100));
 
-  etcpal_socket_t sock;
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
@@ -151,7 +151,7 @@ TEST(etcpal_socket, poll_add_remove_socket_works)
   EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
-  etcpal_socket_t sock;
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
@@ -166,7 +166,8 @@ TEST(etcpal_socket, poll_add_remove_socket_works)
 
 TEST(etcpal_socket, poll_user_data_works)
 {
-  etcpal_socket_t sock_1, sock_2;
+  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INVALID;
   void*           user_data_1 = (void*)1;
   void*           user_data_2 = (void*)2;
 
@@ -341,7 +342,8 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
 // Test the etcpal_poll_* API, polling for writeablility on UDP sockets.
 TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
 {
-  etcpal_socket_t sock_1, sock_2;
+  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INVALID;
 
   EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));

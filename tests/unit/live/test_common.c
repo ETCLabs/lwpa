@@ -62,7 +62,7 @@ TEST(etcpal_common, netint_double_init_works)
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 
   // After 2 inits and one deinit, we should still be able to make valid calls to the module.
-  unsigned int def_netint;
+  unsigned int def_netint = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
 
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);

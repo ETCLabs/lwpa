@@ -389,12 +389,11 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
   }
   else if (ETCPAL_IP_IS_V6(ip1) && ETCPAL_IP_IS_V6(ip2) && ETCPAL_IP_IS_V6(netmask))
   {
-    size_t         i;
     const uint8_t* p1 = ETCPAL_IP_V6_ADDRESS(ip1);
     const uint8_t* p2 = ETCPAL_IP_V6_ADDRESS(ip2);
     const uint8_t* pm = ETCPAL_IP_V6_ADDRESS(netmask);
 
-    for (i = 0; i < ETCPAL_IPV6_BYTES; ++i, ++p1, ++p2, ++pm)
+    for (size_t i = 0; i < ETCPAL_IPV6_BYTES; ++i, ++p1, ++p2, ++pm)
     {
       if ((*p1 & *pm) != (*p2 & *pm))
         return false;

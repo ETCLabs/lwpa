@@ -47,6 +47,7 @@ static void create_shuffled_index_array(size_t* array, size_t size)
   for (size_t i = 0; i < size - 1; ++i)
   {
     // srand() is taken care of at the entry point.
+    // Clang analyzer false positive: NOLINTNEXTLINE(clang-analyzer-core.DivideZero)
     size_t j = (size_t)(i + rand()) / (size_t)(RAND_MAX / (size - i) + 1);
     size_t swap_val = array[j];
     array[j] = array[i];

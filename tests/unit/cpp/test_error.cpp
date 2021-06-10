@@ -167,7 +167,7 @@ private:
 static_assert(!std::is_default_constructible<etcpal::Expected<NoDefaultConstructor>>::value,
               "Expected should not be default-constructible with a non-default-constructible class");
 
-class NoCopyConstructor
+class NoCopyConstructor // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
   NoCopyConstructor(const NoCopyConstructor& other) = delete;
@@ -182,7 +182,7 @@ static_assert(!std::is_copy_constructible<etcpal::Expected<NoCopyConstructor>>::
 static_assert(std::is_move_constructible<etcpal::Expected<NoCopyConstructor>>::value,
               "Expected should be move-constructible with a move-constructible class");
 
-class NoMoveConstructor
+class NoMoveConstructor // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
   NoMoveConstructor() = default;
@@ -357,7 +357,7 @@ TEST(etcpal_expected, value_throws_on_error)
 
 TEST(etcpal_expected, with_error_constructor_destructor_not_called)
 {
-  class DoNotConstructOrDestruct
+  class DoNotConstructOrDestruct // NOLINT(cppcoreguidelines-special-member-functions)
   {
   public:
     DoNotConstructOrDestruct() { TEST_FAIL(); }

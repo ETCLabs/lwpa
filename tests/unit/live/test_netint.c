@@ -55,11 +55,11 @@ TEST(etcpal_netint_no_init, api_does_not_work_before_initialization)
   TEST_ASSERT_EQUAL(etcpal_netint_get_num_interfaces(), 0u);
   TEST_ASSERT_EQUAL_PTR(etcpal_netint_get_interfaces(), NULL);
 
-  const EtcPalNetintInfo* netint_arr;
-  size_t                  netint_arr_size;
+  const EtcPalNetintInfo* netint_arr = NULL;
+  size_t                  netint_arr_size = 0;
   TEST_ASSERT_EQUAL(etcpal_netint_get_interfaces_by_index(1, &netint_arr, &netint_arr_size), kEtcPalErrNotInit);
 
-  unsigned int index;
+  unsigned int index = 0;
   TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &index), kEtcPalErrNotInit);
   TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &index), kEtcPalErrNotInit);
 
@@ -211,7 +211,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
       continue;
 
     EtcPalIpAddr test_addr = netint->addr;
-    unsigned int netint_index_res;
+    unsigned int netint_index_res = 0;
     TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
     // Put addresses in print form to test meaningful information in case of test failure
@@ -226,8 +226,8 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
 
   EtcPalIpAddr ext_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  unsigned int netint_index_res;
-  unsigned int netint_index_default;
+  unsigned int netint_index_res = 0;
+  unsigned int netint_index_default = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &netint_index_default));
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
   TEST_ASSERT_EQUAL_UINT(netint_index_res, netint_index_default);

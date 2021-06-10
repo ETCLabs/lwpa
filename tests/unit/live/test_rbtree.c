@@ -386,7 +386,6 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
   // Get the height of the tree and compare it against the theoretical maximum.
   EtcPalRbIter iter;
   size_t       max_height = 0;
-  size_t       theoretical_max_height;
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_init(&iter));
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_first(&iter, &tree));
   do
@@ -395,8 +394,10 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
       max_height = iter.top;
   } while (NULL != etcpal_rbiter_next(&iter));
   max_height += 1;
+
   // http://www.doctrina.org/maximum-height-of-red-black-tree.html
-  theoretical_max_height = 2 * (size_t)(log(INT_ARRAY_SIZE + 1) / log(2));
+  size_t theoretical_max_height = 2 * (size_t)(log(INT_ARRAY_SIZE + 1) / log(2));
+
   TEST_ASSERT_LESS_OR_EQUAL_UINT(theoretical_max_height, max_height);
 }
 

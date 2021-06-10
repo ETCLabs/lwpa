@@ -48,8 +48,8 @@ etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
   if (etcpal_mutex_lock(&mempool_lock))
   {
 #endif
-    size_t i;
-    for (i = 0; i < desc->pool_size - 1; ++i)
+    size_t i = 0;
+    for (; i < desc->pool_size - 1; ++i)
       desc->list[i].next = &desc->list[i + 1];
     desc->list[i].next = NULL;
     desc->freelist = desc->list;

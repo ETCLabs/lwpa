@@ -27,6 +27,6 @@ extern "C" void run_all_tests(void);
 
 int main(int argc, char* argv[])
 {
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(nullptr));
   return UnityMain(argc, (const char**)argv, run_all_tests);
 }

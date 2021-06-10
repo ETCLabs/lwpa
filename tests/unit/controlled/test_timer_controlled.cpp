@@ -24,6 +24,7 @@
 
 extern "C" {
 
+// NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index,cppcoreguidelines-pro-type-cstyle-cast)
 FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
 
 TEST_GROUP(timer_controlled);

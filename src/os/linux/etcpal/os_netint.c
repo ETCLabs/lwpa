@@ -143,7 +143,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (ioctl_sock == -1)
     return errno_os_to_etcpal(errno);
 
-  struct ifaddrs* os_addrs;
+  struct ifaddrs* os_addrs = NULL;
   if (getifaddrs(&os_addrs) < 0)
   {
     close(ioctl_sock);
@@ -291,7 +291,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 
   // Translate the index to a name
   struct ifreq if_req;
-  if_req.ifr_ifindex = index;
+  if_req.ifr_ifindex = (int)index;
   int ioctl_res = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
   if (ioctl_res != 0)
   {

@@ -326,8 +326,10 @@ TEST(etcpal_log, priority_is_passed_unmodified)
 
 // A string with a non-ASCII character: "host\xC8name"
 // Should be sanitized to "host?name"
+// NOLINTNEXTLINE(cppcoreguidelines-narrowing-conversions)
 const char kWeirdHostname[] = {0x68, 0x6f, 0x73, 0x74, 0xc8, 0x6e, 0x61, 0x6d, 0x65, 0x00};
 // A string with some non-printing and non-ASCII characters: "\x012\x034\xff"
+// NOLINTNEXTLINE(cppcoreguidelines-narrowing-conversions)
 const char kWeirdProcId[] = {0x01, 0x32, 0x03, 0x34, 0xff, 0x00};
 // A string with a non-printing character: "My\x001App"
 const char kWeirdAppName[] = {0x4d, 0x79, 0x01, 0x41, 0x70, 0x70, 0x00};
@@ -731,7 +733,7 @@ TEST(etcpal_log, formatting_string_values_works)
 
 // Helper to get the proper sanitized character from a loop counter for the
 // max length string test
-static unsigned char get_sanitized_char(size_t i)
+static char get_sanitized_char(size_t i)
 {
   unsigned char ret = (i % 128 == 0 ? 1 : i % 128);
 
@@ -740,7 +742,7 @@ static unsigned char get_sanitized_char(size_t i)
     ret = '_';
   else if (ret > 127)
     ret = '?';
-  return ret;
+  return (char)ret;
 }
 
 // Test logging a maximum length string.
@@ -762,8 +764,8 @@ TEST(etcpal_log, maximum_length_human_string_works)
 
   // Now build our actual log message
   static char to_log_str[ETCPAL_RAW_LOG_MSG_MAX_LEN];
-  size_t      i;
-  for (i = 0; i < ETCPAL_RAW_LOG_MSG_MAX_LEN - 1; ++i)
+  size_t      i = 0;
+  for (; i < ETCPAL_RAW_LOG_MSG_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     expect_human_str[str_pos++] = to_add;
@@ -808,8 +810,8 @@ TEST(etcpal_log, maximum_length_syslog_string_works)
   size_t str_pos = strlen(expect_syslog_str);
 
   // Create our very long syslog header components
-  size_t i;
-  for (i = 0; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
+  size_t i = 0;
+  for (; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     lparams.syslog_params.hostname[i] = to_add;
@@ -891,8 +893,8 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
   size_t str_pos = strlen(expect_syslog_str);
 
   // Create our very long syslog header components
-  size_t i;
-  for (i = 0; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
+  size_t i = 0;
+  for (; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     lparams.syslog_params.hostname[i] = to_add;
@@ -967,9 +969,8 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
 static bool vcreate_test_helper(const char* format, ...)
 {
   va_list args;
-  bool    res;
   va_start(args, format);
-  res = etcpal_vcreate_log_str(human_buf, ETCPAL_LOG_STR_MAX_LEN, &cur_time, VCREATE_TEST_PRI, format, args);
+  bool res = etcpal_vcreate_log_str(human_buf, ETCPAL_LOG_STR_MAX_LEN, &cur_time, VCREATE_TEST_PRI, format, args);
   va_end(args);
   return res;
 }
@@ -991,10 +992,9 @@ static const EtcPalSyslogParams kVcreateTestSyslogParams = {ETCPAL_LOG_DAEMON, "
 static bool vcreate_syslog_test_helper(const char* format, ...)
 {
   va_list args;
-  bool    res;
   va_start(args, format);
-  res = etcpal_vcreate_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &kVcreateTestSyslogParams,
-                                  VCREATE_SYSLOG_TEST_PRI, format, args);
+  bool res = etcpal_vcreate_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &kVcreateTestSyslogParams,
+                                       VCREATE_SYSLOG_TEST_PRI, format, args);
   va_end(args);
   return res;
 }
@@ -1011,10 +1011,9 @@ TEST(etcpal_log, vcreate_syslog_str_works)
 static bool vcreate_legacy_syslog_test_helper(const char* format, ...)
 {
   va_list args;
-  bool    res;
   va_start(args, format);
-  res = etcpal_vcreate_legacy_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &kVcreateTestSyslogParams,
-                                         VCREATE_SYSLOG_TEST_PRI, format, args);
+  bool res = etcpal_vcreate_legacy_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time,
+                                              &kVcreateTestSyslogParams, VCREATE_SYSLOG_TEST_PRI, format, args);
   va_end(args);
   return res;
 }

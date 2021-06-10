@@ -79,8 +79,8 @@ static void select_network_interface_v4()
 {
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &v4_netint))
   {
-    const EtcPalNetintInfo* netint_arr;
-    size_t                  netint_arr_size;
+    const EtcPalNetintInfo* netint_arr = NULL;
+    size_t                  netint_arr_size = 0;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->id, "utun"))
     {
@@ -115,8 +115,8 @@ static void select_network_interface_v6()
 {
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &v6_netint))
   {
-    const EtcPalNetintInfo* netint_arr;
-    size_t                  netint_arr_size;
+    const EtcPalNetintInfo* netint_arr = NULL;
+    size_t                  netint_arr_size = 0;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->id, "utun"))
     {

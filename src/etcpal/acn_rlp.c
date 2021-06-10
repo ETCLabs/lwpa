@@ -238,12 +238,10 @@ bool acn_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, AcnRootLayerPdu
  */
 size_t acn_pack_udp_preamble(uint8_t* buf, size_t buflen)
 {
-  uint8_t* cur_ptr;
-
   if (!buf || buflen < ACN_UDP_PREAMBLE_SIZE)
     return 0;
 
-  cur_ptr = buf;
+  uint8_t* cur_ptr = buf;
   etcpal_pack_u16b(cur_ptr, ACN_UDP_PREAMBLE_SIZE);
   cur_ptr += 2;
   etcpal_pack_u16b(cur_ptr, 0);
@@ -290,10 +288,9 @@ size_t acn_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
  */
 size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus)
 {
-  const AcnRootLayerPdu* pdu;
   size_t                 block_size = 0;
 
-  for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
+  for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
     block_size += pdu->data_len;
     // We assume no inheritance here, so the largest possible buffer is allocated.

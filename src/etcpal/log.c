@@ -169,9 +169,8 @@ bool etcpal_create_log_str(char*                     buf,
                            ...)
 {
   va_list args;
-  bool    res;
   va_start(args, format);
-  res = (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
+  bool res = (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
   va_end(args);
   return res;
 }
@@ -225,9 +224,8 @@ bool etcpal_create_syslog_str(char*                     buf,
                               ...)
 {
   va_list args;
-  bool    res;
   va_start(args, format);
-  res = (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
+  bool res = (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
   va_end(args);
   return res;
 }
@@ -283,9 +281,8 @@ bool etcpal_create_legacy_syslog_str(char*                     buf,
                                      ...)
 {
   va_list args;
-  bool    res;
   va_start(args, format);
-  res = (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
+  bool res = (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
   va_end(args);
   return res;
 }
@@ -371,13 +368,9 @@ bool etcpal_validate_log_params(EtcPalLogParams* params)
  */
 bool etcpal_validate_log_timestamp(const EtcPalLogTimestamp* timestamp)
 {
-  if (timestamp)
-  {
-    return (timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 && timestamp->day >= 1 &&
-            timestamp->day <= 31 && timestamp->hour <= 23 && timestamp->minute <= 59 && timestamp->second <= 60 &&
-            timestamp->msec <= 999);
-  }
-  return false;
+  return (timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 && timestamp->day >= 1 &&
+          timestamp->day <= 31 && timestamp->hour <= 23 && timestamp->minute <= 59 && timestamp->second <= 60 &&
+          timestamp->msec <= 999);
 }
 
 /**
@@ -520,7 +513,7 @@ char* create_log_str(char*                     buf,
   char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
   make_iso_timestamp(timestamp, timestamp_str, true);
 
-  int header_size;
+  int header_size = 0;
   if (timestamp_str[0] == '\0')
   {
     header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "[%s] ", kLogSeverityStrings[pri]);
@@ -602,7 +595,7 @@ char* create_legacy_syslog_str(char*                     buf,
 
   // Resolve the hostname
   const char* header_format = "<%d>%s%s %s";
-  const char* hostname_str;
+  const char* hostname_str = "";
   if (timestamp_str[0] != '\0')
   {
     if (syslog_params->hostname[0] != '\0')
@@ -613,7 +606,6 @@ char* create_legacy_syslog_str(char*                     buf,
   else  // Hostname cannot be included without timestamp
   {
     header_format = "<%d>%s%s%s";
-    hostname_str = "";
   }
 
   int prival = ETCPAL_LOG_PRI(pri) | syslog_params->facility;
@@ -637,8 +629,7 @@ void sanitize_str(char* str)
 {
   // C library functions like isprint()/isgraph() are not used here because their behavior is not
   // well-defined in the presence of non-ASCII characters.
-  unsigned char* cp;
-  for (cp = (unsigned char*)str; *cp != '\0'; ++cp)
+  for (unsigned char* cp = (unsigned char*)str; *cp != '\0'; ++cp)
   {
     if (*cp < 33 || *cp == 127)
       *cp = '_';
@@ -652,7 +643,7 @@ void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool hum
 {
   bool timestamp_created = false;
 
-  if (etcpal_validate_log_timestamp(timestamp))
+  if (timestamp && etcpal_validate_log_timestamp(timestamp))
   {
     // Print the basic timestamp
     int print_res = snprintf(
@@ -691,7 +682,7 @@ void make_legacy_syslog_timestamp(const EtcPalLogTimestamp* timestamp, char* buf
 {
   bool timestamp_created = false;
 
-  if (etcpal_validate_log_timestamp(timestamp))
+  if (timestamp && etcpal_validate_log_timestamp(timestamp))
   {
     // Print the basic timestamp
     int print_res = snprintf(buf, ETCPAL_LOG_TIMESTAMP_LEN, "%s %2d %02u:%02u:%02u ", kMonthNames[timestamp->month - 1],

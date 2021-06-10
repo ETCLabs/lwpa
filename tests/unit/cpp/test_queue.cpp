@@ -75,7 +75,6 @@ TEST(etcpal_cpp_queue, will_timeout_on_receive)
   etcpal::Queue<unsigned char> q(3);
   unsigned char       data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
-  data = 0xAD;
   unsigned char receivedData = 0x00;
   TEST_ASSERT_TRUE(q.Receive(receivedData, 10));
 #if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS

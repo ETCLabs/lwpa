@@ -427,7 +427,7 @@ Error Thread::Start(Function&& func, Args&&... args)
   if (thread_)
     return kEtcPalErrInvalid;
 
-  thread_.reset(new etcpal_thread_t);
+  thread_ = std::unique_ptr<etcpal_thread_t>(new etcpal_thread_t);
   if (!thread_)
     return kEtcPalErrNoMem;
 

@@ -315,7 +315,7 @@ TEST(etcpal_cpp_log, queued_dispatch_works)
   std::vector<std::string> log_strs;
   log_strs.reserve(3);
   test_log_handler.OnLogEvent(
-      [&log_strs](const EtcPalLogStrings& strings) { log_strs.push_back(strings.human_readable); });
+      [&log_strs](const EtcPalLogStrings& strings) { log_strs.emplace_back(strings.human_readable); });
 
   // Startup should work - after starting, logging should work
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Queued)

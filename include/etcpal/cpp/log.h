@@ -23,6 +23,7 @@
 #ifndef ETCPAL_CPP_LOG_H_
 #define ETCPAL_CPP_LOG_H_
 
+#include <array>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
@@ -298,8 +299,8 @@ private:
 
   struct LogMessage
   {
-    int  pri;
-    char buf[ETCPAL_RAW_LOG_MSG_MAX_LEN];
+    int                                          pri;
+    std::array<char, ETCPAL_RAW_LOG_MSG_MAX_LEN> buf;
   };
 
   // Used when dispatch_policy_ == Queued
@@ -365,8 +366,8 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
   {
     // Start the log dispatch thread
     running_ = true;
-    signal_.reset(new etcpal::Signal);
-    mutex_.reset(new etcpal::Mutex);
+    signal_ = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
+    mutex_ = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
     if (thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
     {
       return true;
@@ -701,7 +702,7 @@ inline void Logger::LogInternal(int pri, const char* format, std::va_list args)
         etcpal::MutexGuard lock(*mutex_);
         msg_q_.emplace();
         msg_q_.back().pri = pri;
-        vsnprintf(msg_q_.back().buf, ETCPAL_RAW_LOG_MSG_MAX_LEN, format, args);
+        vsnprintf(msg_q_.back().buf.data(), ETCPAL_RAW_LOG_MSG_MAX_LEN, format, args);
       }
       signal_->Notify();
     }
@@ -729,7 +730,7 @@ inline void Logger::EmptyLogQueue()
 
   while (!to_log.empty())
   {
-    etcpal_log(&log_params_, to_log.front().pri, "%s", to_log.front().buf);
+    etcpal_log(&log_params_, to_log.front().pri, "%s", to_log.front().buf.data());
     to_log.pop();
   }
 }

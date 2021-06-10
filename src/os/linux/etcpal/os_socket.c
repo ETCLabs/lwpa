@@ -764,7 +764,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
           event->user_data = sock_desc->user_data;
 
           // Check for errors
-          int       error;
+          int       error = 0;
           socklen_t error_size = sizeof error;
           if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &error, &error_size) == 0)
           {
@@ -860,13 +860,10 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
                                   const EtcPalAddrinfo* hints,
                                   EtcPalAddrinfo*       result)
 {
-  int              res;
-  struct addrinfo* pf_res;
-  struct addrinfo  pf_hints;
-
   if ((!hostname && !service) || !result)
     return kEtcPalErrInvalid;
 
+  struct addrinfo  pf_hints;
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
@@ -876,7 +873,8 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
   }
 
-  res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
+  struct addrinfo* pf_res = NULL;
+  int res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
   if (res == 0)
   {
     result->pd[0] = pf_res;

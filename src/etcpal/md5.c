@@ -110,10 +110,8 @@ context.
 */
 void MD5Update(MD5_CTX* context, const uint8_t* input, unsigned int inputLen)
 {
-  unsigned int i, index, partLen;
-
   /* Compute number of bytes mod 64 */
-  index = (unsigned int)((context->count[0] >> 3) & 0x3F);
+  unsigned int index = (unsigned int)((context->count[0] >> 3) & 0x3F);
 
   /* Update number of bits */
   if ((context->count[0] += ((uint32_t)inputLen << 3)) < ((uint32_t)inputLen << 3))
@@ -122,9 +120,10 @@ void MD5Update(MD5_CTX* context, const uint8_t* input, unsigned int inputLen)
   }
   context->count[1] += ((uint32_t)inputLen >> 29);
 
-  partLen = 64 - index;
+  unsigned int partLen = 64 - index;
 
   /* Transform as many times as possible.*/
+  unsigned int i = 0;
   if (inputLen >= partLen)
   {
     memcpy((uint8_t*)&context->buffer[index], (uint8_t*)input, partLen);
@@ -135,8 +134,6 @@ void MD5Update(MD5_CTX* context, const uint8_t* input, unsigned int inputLen)
 
     index = 0;
   }
-  else
-    i = 0;
 
   /* Buffer remaining input */
   memcpy((uint8_t*)&context->buffer[index], (uint8_t*)&input[i], inputLen - i);
@@ -148,14 +145,13 @@ the message digest and zeroizing the context.
 void MD5Final(uint8_t digest[16], MD5_CTX* context)
 {
   uint8_t      bits[8];
-  unsigned int index, padLen;
 
   /* Save number of bits */
   Encode(bits, context->count, 8);
 
   /* Pad out to 56 mod 64.*/
-  index = (unsigned int)((context->count[0] >> 3) & 0x3f);
-  padLen = (index < 56) ? (56 - index) : (120 - index);
+  unsigned int index = (unsigned int)((context->count[0] >> 3) & 0x3f);
+  unsigned int padLen = (index < 56) ? (56 - index) : (120 - index);
   MD5Update(context, PADDING, padLen);
 
   /* Append length (before padding) */
@@ -262,9 +258,7 @@ a multiple of 4.
 */
 static void Encode(uint8_t* output, uint32_t* input, unsigned int len)
 {
-  unsigned int i, j;
-
-  for (i = 0, j = 0; j < len; i++, j += 4)
+  for (unsigned int i = 0, j = 0; j < len; i++, j += 4)
   {
     output[j] = (uint8_t)(input[i] & 0xff);
     output[j + 1] = (uint8_t)((input[i] >> 8) & 0xff);
@@ -278,9 +272,7 @@ a multiple of 4.
 */
 static void Decode(uint32_t* output, const uint8_t* input, unsigned int len)
 {
-  unsigned int i, j;
-
-  for (i = 0, j = 0; j < len; i++, j += 4)
+  for (unsigned int i = 0, j = 0; j < len; i++, j += 4)
   {
     output[i] = ((uint32_t)input[j]) | (((uint32_t)input[j + 1]) << 8) | (((uint32_t)input[j + 2]) << 16) |
                 (((uint32_t)input[j + 3]) << 24);

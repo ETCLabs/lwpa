@@ -90,11 +90,6 @@ public:
   Uuid() = default;
 
   Uuid(const uint8_t* data) noexcept;
-  Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const uint8_t clock_seq_and_node[8]);
-  Uuid(uint32_t                      time_low,
-       uint16_t                      time_mid,
-       uint16_t                      time_hi_and_version,
-       const std::array<uint8_t, 8>& clock_seq_and_node);
 
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::Uuid uuid = etcpal_c_function_that_returns_uuid();
@@ -145,35 +140,6 @@ inline Uuid::Uuid(const uint8_t* data) noexcept
   std::memcpy(uuid_.data, data, ETCPAL_UUID_BYTES);
 }
 
-/// @brief Construct a UUID from its RFC-specified layout fields.
-/// @param time_low The time_low portion of the UUID.
-/// @param time_mid The time_mid portion of the UUID.
-/// @param time_hi_and_version The time_hi_and_version portion of the UUID.
-/// @param clock_seq_and_node The clock_seq and node portions of the UUID.
-inline Uuid::Uuid(uint32_t      time_low,
-                  uint16_t      time_mid,
-                  uint16_t      time_hi_and_version,
-                  const uint8_t clock_seq_and_node[8])
-{
-  etcpal_pack_u32b(&uuid_.data[0], time_low);
-  etcpal_pack_u16b(&uuid_.data[4], time_mid);
-  etcpal_pack_u16b(&uuid_.data[6], time_hi_and_version);
-  std::memcpy(&uuid_.data[8], clock_seq_and_node, 8);
-}
-
-/// @brief Construct a UUID from its RFC-specified layout fields.
-/// @param time_low The time_low portion of the UUID.
-/// @param time_mid The time_mid portion of the UUID.
-/// @param time_hi_and_version The time_hi_and_version portion of the UUID.
-/// @param clock_seq_and_node The clock_seq and node portions of the UUID.
-inline Uuid::Uuid(uint32_t                      time_low,
-                  uint16_t                      time_mid,
-                  uint16_t                      time_hi_and_version,
-                  const std::array<uint8_t, 8>& clock_seq_and_node)
-    : Uuid(time_low, time_mid, time_hi_and_version, clock_seq_and_node.data())
-{
-}
-
 /// @brief Assign an instance of the C EtcPalUuid type to an instance of this class.
 inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid) noexcept
 {
@@ -197,11 +163,11 @@ inline const uint8_t* Uuid::data() const noexcept
 /// @brief Convert the UUID to a string representation formatted per RFC 4122.
 inline std::string Uuid::ToString() const
 {
-  char str_buf[ETCPAL_UUID_STRING_BYTES];
-  if (etcpal_uuid_to_string(&uuid_, str_buf))
-    return str_buf;
+  std::array<char, ETCPAL_UUID_STRING_BYTES> str_buf{};
+  if (etcpal_uuid_to_string(&uuid_, str_buf.data()))
+    return {str_buf.data()};
   else
-    return std::string();
+    return {};
 }
 
 /// @brief Check if a UUID is null (all 0's).
@@ -240,7 +206,7 @@ inline uint16_t Uuid::time_hi_and_version() const noexcept
 ///        node
 inline std::array<uint8_t, 8> Uuid::clock_seq_and_node() const noexcept
 {
-  std::array<uint8_t, 8> res;
+  std::array<uint8_t, 8> res{};
   std::memcpy(res.data(), &uuid_.data[8], 8);
   return res;
 }

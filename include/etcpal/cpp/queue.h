@@ -96,6 +96,11 @@ public:
   explicit Queue(size_t size);
   ~Queue();
 
+  Queue(const Queue& other) = delete;
+  Queue& operator=(const Queue& other) = delete;
+  Queue(Queue&& other) = delete;
+  Queue& operator=(Queue&& other) = delete;
+
   bool Send(const T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   bool SendFromIsr(const T& data);
 

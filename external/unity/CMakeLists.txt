@@ -8,7 +8,11 @@ if(NOT TARGET ThrowTheSwitch::Unity)
     # The "test fixture" extension
     extras/fixture/src/unity_fixture.c
   )
-  set_target_properties(unity PROPERTIES FOLDER tests)
+  set_target_properties(unity PROPERTIES
+    FOLDER tests
+    C_CLANG_TIDY "" # Don't run clang-tidy on external code
+    CXX_CLANG_TIDY ""
+  )
   target_include_directories(unity PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src
     ${CMAKE_CURRENT_LIST_DIR}/extras/fixture/src

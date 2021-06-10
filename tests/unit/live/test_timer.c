@@ -38,10 +38,9 @@ TEST_TEAR_DOWN(etcpal_timer)
 
 TEST(etcpal_timer, getms_gets_increasing_values)
 {
-  uint32_t t1, t2;
-  t1 = etcpal_getms();
+  uint32_t t1 = etcpal_getms();
   etcpal_thread_sleep(10);
-  t2 = etcpal_getms();
+  uint32_t t2 = etcpal_getms();
 
   TEST_ASSERT_NOT_EQUAL(t1, 0u);
   TEST_ASSERT_NOT_EQUAL(t2, 0u);

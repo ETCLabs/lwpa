@@ -37,6 +37,11 @@ static_assert(TestIntId().value() == -1, "Value getter should work in a constant
 static_assert(TestIntId(4), "Value constructor and operator bool should work in a constant expression");
 static_assert(TestIntId(4).value() == 4, "Value getter should work in a constant expression");
 
+struct TestUint8IdType
+{
+};
+using TestUint8Id = etcpal::OpaqueId<TestUint8IdType, uint8_t, UINT8_MAX>;
+
 extern "C" {
 TEST_GROUP(etcpal_cpp_opaque_id);
 
@@ -114,11 +119,6 @@ TEST(etcpal_cpp_opaque_id, std_hash_works)
 
   TEST_ASSERT_EQUAL(ids.size(), 2u);
 }
-
-struct TestUint8IdType
-{
-};
-using TestUint8Id = etcpal::OpaqueId<TestUint8IdType, uint8_t, UINT8_MAX>;
 
 TEST(etcpal_cpp_opaque_id, uint8_id_works)
 {
