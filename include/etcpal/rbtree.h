@@ -238,7 +238,7 @@ void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
 EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value);
 
 EtcPalRbTree*  etcpal_rbtree_init(EtcPalRbTree*           self,
-                                  EtcPalRbTreeNodeCmpFunc cmp,
+                                  EtcPalRbTreeNodeCmpFunc node_cmp_cb,
                                   EtcPalRbNodeAllocFunc   alloc_f,
                                   EtcPalRbNodeDeallocFunc dealloc_f);
 void*          etcpal_rbtree_find(EtcPalRbTree* self, const void* value);

@@ -255,14 +255,10 @@ etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
   {
     etcpal_error_t insert_res = etcpal_rbtree_insert_node(self, new_node);
     if (insert_res == kEtcPalErrOk)
-    {
       return kEtcPalErrOk;
-    }
-    else
-    {
-      rb_node_dealloc(new_node, self);
-      return insert_res;
-    }
+
+    rb_node_dealloc(new_node, self);
+    return insert_res;
   }
   else
   {
@@ -299,14 +295,15 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
     }
     else
     {
-      EtcPalRbNode  head = {0}; /* False tree root */
+      EtcPalRbNode head = {0}; /* False tree root */
       /* Grandparent & parent */
-      EtcPalRbNode *g = NULL;
-      EtcPalRbNode *t = &head;
+      EtcPalRbNode* g = NULL;
+      EtcPalRbNode* t = &head;
       /* Iterator & parent */
-      EtcPalRbNode *p = NULL;
-      EtcPalRbNode *q = t->link[1] = self->root;
-      int           dir = 0, last = 0;
+      EtcPalRbNode* p = NULL;
+      EtcPalRbNode* q = t->link[1] = self->root;
+      int           dir = 0;
+      int           last = 0;
 
       /* Search down the tree for a place to insert */
       while (1)
@@ -422,15 +419,15 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
   if (NULL == etcpal_rbtree_find(self, value))
     return kEtcPalErrNotFound;
 
-  EtcPalRbNode  head = {0}; /* False tree root */
+  EtcPalRbNode head = {0}; /* False tree root */
   /* Helpers */
   EtcPalRbNode* q = &head;
   EtcPalRbNode* g = NULL;
   EtcPalRbNode* p = NULL;
-  EtcPalRbNode* f = NULL;   /* Found item */
+  EtcPalRbNode* f = NULL; /* Found item */
   q->link[1] = self->root;
 
-  int           dir = 1;
+  int dir = 1;
 
   /* Search and push a red node down to fix red violations as we go */
   while (q->link[dir] != NULL)
@@ -607,45 +604,41 @@ size_t etcpal_rbtree_size(EtcPalRbTree* self)
 int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
 {
   if (root == NULL)
-  {
     return 1;
-  }
-  else
+
+  EtcPalRbNode* ln = root->link[0];
+  EtcPalRbNode* rn = root->link[1];
+
+  /* Consecutive red links */
+  if (rb_node_is_red(root))
   {
-    EtcPalRbNode* ln = root->link[0];
-    EtcPalRbNode* rn = root->link[1];
-
-    /* Consecutive red links */
-    if (rb_node_is_red(root))
-    {
-      if (rb_node_is_red(ln) || rb_node_is_red(rn))
-      {
-        return 0;
-      }
-    }
-
-    int lh = etcpal_rbtree_test(self, ln);
-    int rh = etcpal_rbtree_test(self, rn);
-
-    /* Invalid binary search tree */
-    if ((ln != NULL && self->cmp(self, ln->value, root->value) >= 0) ||
-        (rn != NULL && self->cmp(self, rn->value, root->value) <= 0))
+    if (rb_node_is_red(ln) || rb_node_is_red(rn))
     {
       return 0;
     }
-
-    /* Black height mismatch */
-    if (lh != 0 && rh != 0 && lh != rh)
-    {
-      return 0;
-    }
-
-    /* Only count black links */
-    if (lh != 0 && rh != 0)
-      return rb_node_is_red(root) ? lh : lh + 1;
-    else
-      return 0;
   }
+
+  int lh = etcpal_rbtree_test(self, ln);
+  int rh = etcpal_rbtree_test(self, rn);
+
+  /* Invalid binary search tree */
+  if ((ln != NULL && self->cmp(self, ln->value, root->value) >= 0) ||
+      (rn != NULL && self->cmp(self, rn->value, root->value) <= 0))
+  {
+    return 0;
+  }
+
+  /* Black height mismatch */
+  if (lh != 0 && rh != 0 && lh != rh)
+  {
+    return 0;
+  }
+
+  /* Only count black links */
+  if (lh != 0 && rh != 0)
+    return rb_node_is_red(root) ? lh : lh + 1;
+
+  return 0;
 }
 
 /* etcpal_rbiter */

@@ -45,9 +45,9 @@ documentation and/or software.
 #define S43 15
 #define S44 21
 
-static void MD5Transform(uint32_t[4], const uint8_t[64]);
-static void Encode(uint8_t*, uint32_t*, unsigned int);
-static void Decode(uint32_t*, const uint8_t*, unsigned int);
+static void MD5Transform(uint32_t state[4], const uint8_t block[64]);
+static void Encode(uint8_t* output, const uint32_t* input, unsigned int len);
+static void Decode(uint32_t* output, const uint8_t* input, unsigned int len);
 
 static uint8_t PADDING[64] = {0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -144,7 +144,7 @@ the message digest and zeroizing the context.
 */
 void MD5Final(uint8_t digest[16], MD5_CTX* context)
 {
-  uint8_t      bits[8];
+  uint8_t bits[8];
 
   /* Save number of bits */
   Encode(bits, context->count, 8);
@@ -168,7 +168,11 @@ void MD5Final(uint8_t digest[16], MD5_CTX* context)
  */
 static void MD5Transform(uint32_t state[4], const uint8_t block[64])
 {
-  uint32_t a = state[0], b = state[1], c = state[2], d = state[3], x[16];
+  uint32_t a = state[0];
+  uint32_t b = state[1];
+  uint32_t c = state[2];
+  uint32_t d = state[3];
+  uint32_t x[16];
 
   Decode(x, block, 64);
 
@@ -256,7 +260,7 @@ static void MD5Transform(uint32_t state[4], const uint8_t block[64])
 /* Encodes input (uint32_t) into output (uint8_t). Assumes len is
 a multiple of 4.
 */
-static void Encode(uint8_t* output, uint32_t* input, unsigned int len)
+static void Encode(uint8_t* output, const uint32_t* input, unsigned int len)
 {
   for (unsigned int i = 0, j = 0; j < len; i++, j += 4)
   {

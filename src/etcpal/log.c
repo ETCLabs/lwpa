@@ -530,10 +530,8 @@ char* create_log_str(char*                     buf,
     vsnprintf(&buf[header_size], buflen - (size_t)header_size, format, args);
     return &buf[header_size];
   }
-  else
-  {
-    return NULL;
-  }
+
+  return NULL;
 }
 
 /*
@@ -567,10 +565,8 @@ char* create_syslog_str(char*                     buf,
     vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
     return &buf[syslog_header_size];
   }
-  else
-  {
-    return NULL;
-  }
+
+  return NULL;
 }
 
 /*
@@ -618,10 +614,8 @@ char* create_legacy_syslog_str(char*                     buf,
     vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
     return &buf[syslog_header_size];
   }
-  else
-  {
-    return NULL;
-  }
+
+  return NULL;
 }
 
 /* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
@@ -734,8 +728,6 @@ bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp)
     params->time_fn(params->context, timestamp);
     return true;
   }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
