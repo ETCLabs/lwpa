@@ -49,7 +49,7 @@ void Thread2Func(int& value)
 
 // Thread 3 uses a lambda below
 
-int main(void)
+int main()
 {
   // No initialization is necessary for the thread module.
 
