@@ -30,7 +30,7 @@
 
 using namespace std::chrono_literals;
 
-int main(void)
+int main()
 {
   // The timer module requires explicit initialization
   etcpal::Error res = etcpal_init(ETCPAL_FEATURE_TIMERS);

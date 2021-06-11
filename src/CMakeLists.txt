@@ -123,6 +123,8 @@ install(FILES ${ETCPAL_PKGCONFIG_INTERMEDIATE_FILE} DESTINATION lib/pkgconfig)
 
 if(ETCPAL_BUILD_MOCK_LIB)
   add_library(EtcPalMock
+    $<TARGET_OBJECTS:EtcPalThirdParty>
+
     # EtcPal headers
     ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
     ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
@@ -148,13 +150,9 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/error.c
     ${ETCPAL_ROOT}/src/etcpal/inet.c
     ${ETCPAL_ROOT}/src/etcpal/log.c
-    ${ETCPAL_ROOT}/src/etcpal/md5.h
-    ${ETCPAL_ROOT}/src/etcpal/md5.c
     ${ETCPAL_ROOT}/src/etcpal/mempool.c
     ${ETCPAL_ROOT}/src/etcpal/pack.c
     ${ETCPAL_ROOT}/src/etcpal/rbtree.c
-    ${ETCPAL_ROOT}/src/etcpal/sha1.h
-    ${ETCPAL_ROOT}/src/etcpal/sha1.c
     ${ETCPAL_ROOT}/src/etcpal/timer.c
     ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
@@ -179,4 +177,5 @@ if(ETCPAL_BUILD_MOCK_LIB)
   if(NOT MSVC)
     set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
   endif()
+  set_target_properties(EtcPalMock PROPERTIES C_CLANG_TIDY "")
 endif()

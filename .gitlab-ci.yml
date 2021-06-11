@@ -120,6 +120,25 @@ mqx-build-and-test:
     reports:
       junit: test_results_*.xml
 
+lint:
+  stage: build
+  tags:
+    - etc-linux-docker
+  image: rikorose/gcc-cmake:gcc-11
+  variables:
+    CLANG_TIDY_COMMAND: clang-tidy-12 --warnings-as-errors='*'
+  script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends lsb-release wget software-properties-common
+    - wget https://apt.llvm.org/llvm.sh
+    - chmod +x llvm.sh
+    - ./llvm.sh 12
+    - apt-get install -y --no-install-recommends clang-tidy-12
+    - mkdir build
+    - cd build
+    - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} -DCMAKE_C_CLANG_TIDY="${CLANG_TIDY_COMMAND}" -DCMAKE_CXX_CLANG_TIDY="${CLANG_TIDY_COMMAND}" ..
+    - cmake --build . -j
+   
 deploy-docs:
   stage: build
   rules:
