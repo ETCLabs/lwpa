@@ -126,7 +126,7 @@ lint:
     - etc-linux-docker
   image: rikorose/gcc-cmake:gcc-11
   variables:
-    CLANG_TIDY_COMMAND: clang-tidy-12 --warnings-as-errors=*
+    CLANG_TIDY_COMMAND: clang-tidy-12;--warnings-as-errors=*
   script:
     - apt-get update
     - apt-get install -y --no-install-recommends lsb-release wget software-properties-common
