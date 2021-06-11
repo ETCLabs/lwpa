@@ -43,8 +43,8 @@ const EtcPalMacAddr kEtcPalNullMacAddr = {{0}};
 
 /**************************** Private variables ******************************/
 
-static const uint8_t v6_wildcard[ETCPAL_IPV6_BYTES] = {0};
-static const uint8_t v6_loopback[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+static const uint8_t kV6Wildcard[ETCPAL_IPV6_BYTES] = {0};
+static const uint8_t kV6Loopback[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 
 /*************************** Function definitions ****************************/
 
@@ -66,7 +66,7 @@ bool etcpal_ip_is_link_local(const EtcPalIpAddr* ip)
       // An IPv4 address is link-local if the first two octets are 0xa9fe (169.254.0.0/16)
       return ((ETCPAL_IP_V4_ADDRESS(ip) & 0xffff0000u) == 0xa9fe0000u);
     }
-    else if (ETCPAL_IP_IS_V6(ip))
+    if (ETCPAL_IP_IS_V6(ip))
     {
       // An IPv6 address is link-local if the first 10 bits are 1111111010 (fe80::/10)
       const uint8_t* addr_buf = ETCPAL_IP_V6_ADDRESS(ip);
@@ -94,10 +94,10 @@ bool etcpal_ip_is_loopback(const EtcPalIpAddr* ip)
       // An IPv4 address is loopback if the first octet is 0x7f (127.0.0.0/8)
       return ((ETCPAL_IP_V4_ADDRESS(ip) & 0xff000000u) == 0x7f000000u);
     }
-    else if (ETCPAL_IP_IS_V6(ip))
+    if (ETCPAL_IP_IS_V6(ip))
     {
       // An IPv6 address is loopback if it is equal to the address ::1
-      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip), v6_loopback, ETCPAL_IPV6_BYTES));
+      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip), kV6Loopback, ETCPAL_IPV6_BYTES));
     }
   }
   return false;
@@ -122,7 +122,7 @@ bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip)
       // (224.0.0.0/4)
       return (ETCPAL_IP_V4_ADDRESS(ip) >= 0xe0000000u && ETCPAL_IP_V4_ADDRESS(ip) <= 0xefffffffu);
     }
-    else if (ETCPAL_IP_IS_V6(ip))
+    if (ETCPAL_IP_IS_V6(ip))
     {
       // An IPv6 address is multicast if the first octet is 0xff (ff00::/8)
       return (ETCPAL_IP_V6_ADDRESS(ip)[0] == 0xff);
@@ -152,9 +152,9 @@ bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip)
     {
       return (ETCPAL_IP_V4_ADDRESS(ip) == 0);
     }
-    else if (ETCPAL_IP_IS_V6(ip))
+    if (ETCPAL_IP_IS_V6(ip))
     {
-      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip), v6_wildcard, ETCPAL_IPV6_BYTES));
+      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip), kV6Wildcard, ETCPAL_IPV6_BYTES));
     }
   }
   return false;
@@ -181,7 +181,7 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip)
         ETCPAL_IP_SET_V4_ADDRESS(ip, 0);
         break;
       case kEtcPalIpTypeV6:
-        ETCPAL_IP_SET_V6_ADDRESS(ip, v6_wildcard);
+        ETCPAL_IP_SET_V6_ADDRESS(ip, kV6Wildcard);
         break;
       default:
         ETCPAL_IP_SET_INVALID(ip);
@@ -213,12 +213,12 @@ int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
     {
       return (int)(ip1->type - ip2->type);
     }
-    else if (ip1->type == kEtcPalIpTypeV4)
+    if (ip1->type == kEtcPalIpTypeV4)
     {
       return (ETCPAL_IP_V4_ADDRESS(ip1) > ETCPAL_IP_V4_ADDRESS(ip2)) -
              (ETCPAL_IP_V4_ADDRESS(ip1) < ETCPAL_IP_V4_ADDRESS(ip2));
     }
-    else if (ip1->type == kEtcPalIpTypeV6)
+    if (ip1->type == kEtcPalIpTypeV6)
     {
       return memcmp(ETCPAL_IP_V6_ADDRESS(ip1), ETCPAL_IP_V6_ADDRESS(ip2), ETCPAL_IPV6_BYTES);
     }
@@ -237,8 +237,7 @@ bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr*
 {
   if (sock1 && sock2)
     return ((etcpal_ip_cmp(&sock1->ip, &sock2->ip) == 0) && sock1->port == sock2->port);
-  else
-    return false;
+  return false;
 }
 
 /**
@@ -387,7 +386,8 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
     return ((ETCPAL_IP_V4_ADDRESS(ip1) & ETCPAL_IP_V4_ADDRESS(netmask)) ==
             (ETCPAL_IP_V4_ADDRESS(ip2) & ETCPAL_IP_V4_ADDRESS(netmask)));
   }
-  else if (ETCPAL_IP_IS_V6(ip1) && ETCPAL_IP_IS_V6(ip2) && ETCPAL_IP_IS_V6(netmask))
+
+  if (ETCPAL_IP_IS_V6(ip1) && ETCPAL_IP_IS_V6(ip2) && ETCPAL_IP_IS_V6(netmask))
   {
     const uint8_t* p1 = ETCPAL_IP_V6_ADDRESS(ip1);
     const uint8_t* p2 = ETCPAL_IP_V6_ADDRESS(ip2);
@@ -400,6 +400,7 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
     }
     return true;
   }
+
   return false;
 }
 

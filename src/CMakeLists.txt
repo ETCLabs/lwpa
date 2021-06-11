@@ -8,6 +8,16 @@ endif()
 # Core EtcPal library
 ###############################################################################
 
+# Embedded third party sources are in a separate object library to avoid linting them with
+# clang-tidy
+add_library(EtcPalThirdParty OBJECT
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.h
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.c
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.h
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.c
+)
+set_target_properties(EtcPalThirdParty PROPERTIES C_CLANG_TIDY "")
+
 set(ETCPAL_LIB_TARGET_NAME EtcPal)
 
 set(ETCPAL_CORE_SOURCES
@@ -32,13 +42,9 @@ set(ETCPAL_CORE_SOURCES
   ${ETCPAL_ROOT}/src/etcpal/common.c
   ${ETCPAL_ROOT}/src/etcpal/error.c
   ${ETCPAL_ROOT}/src/etcpal/log.c
-  ${ETCPAL_ROOT}/src/etcpal/md5.h
-  ${ETCPAL_ROOT}/src/etcpal/md5.c
   ${ETCPAL_ROOT}/src/etcpal/mempool.c
   ${ETCPAL_ROOT}/src/etcpal/pack.c
   ${ETCPAL_ROOT}/src/etcpal/rbtree.c
-  ${ETCPAL_ROOT}/src/etcpal/sha1.h
-  ${ETCPAL_ROOT}/src/etcpal/sha1.c
   ${ETCPAL_ROOT}/src/etcpal/timer.c
   ${ETCPAL_ROOT}/src/etcpal/uuid.c
 )
@@ -66,6 +72,7 @@ endif()
 
 add_library(${ETCPAL_LIB_TARGET_NAME}
   ${ETCPAL_CORE_SOURCES}
+  $<TARGET_OBJECTS:EtcPalThirdParty>
   ${ETCPAL_OS_ADDITIONAL_SOURCES}
   ${ETCPAL_NET_ADDITIONAL_SOURCES}
 )

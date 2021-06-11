@@ -275,10 +275,7 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
     *index = index_found;
     return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrNotFound;
-  }
+  return kEtcPalErrNotFound;
 }
 
 bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
@@ -306,10 +303,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   {
     return (bool)(if_req.ifr_flags & IFF_UP);
   }
-  else
-  {
-    return false;
-  }
+  return false;
 }
 
 etcpal_error_t build_routing_tables(void)
@@ -400,8 +394,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
 
   if (sendto(socket, &req.nl_header, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
     return kEtcPalErrOk;
-  else
-    return errno_os_to_etcpal(errno);
+  return errno_os_to_etcpal(errno);
 }
 
 etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
@@ -569,10 +562,7 @@ int compare_routing_table_entries(const void* a, const void* b)
   {
     return (e1->metric > e2->metric) - (e1->metric < e2->metric);
   }
-  else
-  {
-    return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
-  }
+  return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
 }
 
 void free_routing_tables(void)

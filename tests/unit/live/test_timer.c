@@ -56,9 +56,9 @@ TEST(etcpal_timer, elapsed_since_works)
 
 TEST(etcpal_timer, timers_report_expired_properly)
 {
-  EtcPalTimer t1, t2;
-
+  EtcPalTimer t1;
   etcpal_timer_start(&t1, 0);
+  EtcPalTimer t2;
   etcpal_timer_start(&t2, 100);
 
   // A timer with a timeout of 0 should start expired.

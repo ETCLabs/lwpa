@@ -11,8 +11,8 @@ Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All rights reserved.
 The following sources in this repository are derived from the RSA Data
 Security, Inc. MD5 Message-Digest algorithm:
 
-src/etcpal/md5.h
-src/etcpal/md5.c
+src/etcpal/thirdparty/md5.h
+src/etcpal/thirdparty/md5.c
 
 See the license information at the top of those source files for more details.
 
@@ -41,8 +41,8 @@ By Steve Reid <steve@edmweb.com>, released to the public domain
 The following sources in this repository are based on sources obtained from
 clibs/sha1:
 
-src/etcpal/sha1.h
-src/etcpal/sha1.c
+src/etcpal/thirdparty/sha1.h
+src/etcpal/thirdparty/sha1.c
 
 See the license information at the top of those source files for more details.
 

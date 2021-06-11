@@ -79,8 +79,7 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   {
     if (0 == pthread_join(id->handle, NULL))
       return kEtcPalErrOk;
-    else
-      return errno_os_to_etcpal(errno);
+    return errno_os_to_etcpal(errno);
   }
   return kEtcPalErrInvalid;
 }

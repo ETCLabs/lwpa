@@ -25,7 +25,7 @@
 
 #include "etcpal/common.h"
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -49,9 +49,9 @@ static void          populate_int_arrays();
 static void          initialize_tree_with_random_even_ints(EtcPalRbTree* self);
 static void          test_bound(int is_lower_bound);
 
-FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
-FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
-FAKE_VOID_FUNC(clear_func, const EtcPalRbTree*, EtcPalRbNode*);
+ETC_FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
+ETC_FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
+ETC_FAKE_VOID_FUNC(clear_func, const EtcPalRbTree*, EtcPalRbNode*);
 
 // Very very dumb "allocation" of nodes but all we need for these tests - each call returns the
 // next one from the array, freeing does nothing.
@@ -103,7 +103,7 @@ void initialize_tree_with_random_even_ints(EtcPalRbTree* self)
 }
 
 /* Pass in 0 to test upper_bound, or 1 to test lower_bound. */
-void test_bound(int is_lower_bound)
+void test_bound(int is_lower_bound)  // NOLINT(readability-function-cognitive-complexity)
 {
   // Initialize the tree and iterator. Randomly initialize the tree with even numbers between 0 and 98 inclusive.
   EtcPalRbTree tree;

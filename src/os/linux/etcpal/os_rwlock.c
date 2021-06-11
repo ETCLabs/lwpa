@@ -43,10 +43,7 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
         id->reader_count = 0;
         return true;
       }
-      else
-      {
-        pthread_mutex_destroy(&id->mutex);
-      }
+      pthread_mutex_destroy(&id->mutex);
     }
   }
   return false;

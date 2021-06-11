@@ -167,7 +167,7 @@ private:
 static_assert(!std::is_default_constructible<etcpal::Expected<NoDefaultConstructor>>::value,
               "Expected should not be default-constructible with a non-default-constructible class");
 
-class NoCopyConstructor // NOLINT(cppcoreguidelines-special-member-functions)
+class NoCopyConstructor  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
   NoCopyConstructor(const NoCopyConstructor& other) = delete;
@@ -182,7 +182,7 @@ static_assert(!std::is_copy_constructible<etcpal::Expected<NoCopyConstructor>>::
 static_assert(std::is_move_constructible<etcpal::Expected<NoCopyConstructor>>::value,
               "Expected should be move-constructible with a move-constructible class");
 
-class NoMoveConstructor // NOLINT(cppcoreguidelines-special-member-functions)
+class NoMoveConstructor  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
   NoMoveConstructor() = default;
@@ -223,7 +223,7 @@ TEST(etcpal_expected, default_constructor_is_called)
     ConstructorWithSideEffect() { constructor_ran = true; }
 
   private:
-    int i{42};
+    int i_{42};
   };
 
   constructor_ran = false;
@@ -268,7 +268,7 @@ TEST(etcpal_expected, conversion_copy_constructor_works)
   {
   public:
     explicit ExplicitFromInt(int val) : val_(val) {}
-    int number() { return val_; }
+    int number() const noexcept { return val_; }
 
   private:
     int val_{};
@@ -294,7 +294,7 @@ TEST(etcpal_expected, conversion_move_constructor_works)
   {
   public:
     explicit ExplicitFromInt(int val) : val_(val) {}
-    int number() { return val_; }
+    int number() const noexcept { return val_; }
 
   private:
     int val_{};
@@ -357,7 +357,7 @@ TEST(etcpal_expected, value_throws_on_error)
 
 TEST(etcpal_expected, with_error_constructor_destructor_not_called)
 {
-  class DoNotConstructOrDestruct // NOLINT(cppcoreguidelines-special-member-functions)
+  class DoNotConstructOrDestruct  // NOLINT(cppcoreguidelines-special-member-functions)
   {
   public:
     DoNotConstructOrDestruct() { TEST_FAIL(); }

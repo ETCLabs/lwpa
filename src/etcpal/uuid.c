@@ -22,8 +22,8 @@
 #include <stddef.h>
 #include "etcpal/common.h"
 #include "etcpal/pack.h"
-#include "md5.h"
-#include "sha1.h"
+#include "etcpal/thirdparty/md5.h"
+#include "etcpal/thirdparty/sha1.h"
 
 /****************************** Private macros *******************************/
 
@@ -315,7 +315,7 @@ etcpal_error_t etcpal_generate_device_uuid(const char*    dev_str,
     return kEtcPalErrInvalid;
 
   /* The hardcoded namespace UUID for EtcPal device UUIDs. */
-  static const EtcPalUuid namespace = {
+  static const EtcPalUuid kNamespace = {
       {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a}};
 
 #define TOTAL_NAME_LEN (ETCPAL_UUID_DEV_STR_MAX_LEN + 6 + 4)
@@ -326,5 +326,5 @@ etcpal_error_t etcpal_generate_device_uuid(const char*    dev_str,
   memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr, 6);
   etcpal_pack_u32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + 6], uuid_num);
 
-  return etcpal_generate_v5_uuid(&namespace, name, TOTAL_NAME_LEN, uuid);
+  return etcpal_generate_v5_uuid(&kNamespace, name, TOTAL_NAME_LEN, uuid);
 }

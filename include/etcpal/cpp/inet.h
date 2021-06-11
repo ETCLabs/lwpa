@@ -44,9 +44,9 @@ namespace etcpal
 /// @brief Indicates an IP address family, or an invalid IP address.
 enum class IpAddrType
 {
-  Invalid = kEtcPalIpTypeInvalid,
-  V4 = kEtcPalIpTypeV4,
-  V6 = kEtcPalIpTypeV6
+  kInvalid = kEtcPalIpTypeInvalid,
+  kV4 = kEtcPalIpTypeV4,
+  kV6 = kEtcPalIpTypeV6
 };
 
 /// @ingroup etcpal_cpp_inet
@@ -166,8 +166,7 @@ inline std::string IpAddr::ToString() const
   auto result = etcpal_ip_to_string(&addr_, str_buf.data());
   if (result == kEtcPalErrOk)
     return {str_buf.data()};
-  else
-    return {};
+  return {};
 }
 
 /// @brief Get the raw 32-bit representation of an IPv4 address.
@@ -330,7 +329,7 @@ inline IpAddr IpAddr::FromString(const std::string& ip_str) noexcept
 /// See etcpal_ip_set_wildcard() for more information.
 inline IpAddr IpAddr::WildcardV4() noexcept
 {
-  return Wildcard(IpAddrType::V4);
+  return Wildcard(IpAddrType::kV4);
 }
 
 /// @brief Construct a wildcard IPv6 address.
@@ -338,7 +337,7 @@ inline IpAddr IpAddr::WildcardV4() noexcept
 /// See etcpal_ip_set_wildcard() for more information.
 inline IpAddr IpAddr::WildcardV6() noexcept
 {
-  return Wildcard(IpAddrType::V6);
+  return Wildcard(IpAddrType::kV6);
 }
 
 /// @brief Construct a wildcard address of the type specified.
@@ -356,7 +355,7 @@ inline IpAddr IpAddr::Wildcard(IpAddrType type) noexcept
 /// See etcpal_ip_mask_from_length() for more information.
 inline IpAddr IpAddr::NetmaskV4(unsigned int mask_length) noexcept
 {
-  return Netmask(IpAddrType::V4, mask_length);
+  return Netmask(IpAddrType::kV4, mask_length);
 }
 
 /// @brief Construct an IPv6 netmask given a length in bits.
@@ -364,7 +363,7 @@ inline IpAddr IpAddr::NetmaskV4(unsigned int mask_length) noexcept
 /// See etcpal_ip_mask_from_length() for more information.
 inline IpAddr IpAddr::NetmaskV6(unsigned int mask_length) noexcept
 {
-  return Netmask(IpAddrType::V6, mask_length);
+  return Netmask(IpAddrType::kV6, mask_length);
 }
 
 /// @brief Construct a netmask of the type specifed given a length in bits.
@@ -503,10 +502,9 @@ inline std::string SockAddr::ToString() const
 {
   if (ETCPAL_IP_IS_V4(&addr_.ip))
     return ip().ToString() + ':' + std::to_string(addr_.port);
-  else if (ETCPAL_IP_IS_V6(&addr_.ip))
+  if (ETCPAL_IP_IS_V6(&addr_.ip))
     return '[' + ip().ToString() + "]:" + std::to_string(addr_.port);
-  else
-    return std::string();
+  return {};
 }
 
 /// @brief Get the IP address from the SockAddr.

@@ -37,10 +37,8 @@ bool etcpal_event_group_create(etcpal_event_group_t* id)
         id->bits = 0;
         return true;
       }
-      else
-      {
-        pthread_mutex_destroy(&id->mutex);
-      }
+
+      pthread_mutex_destroy(&id->mutex);
     }
   }
   return false;

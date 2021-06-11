@@ -147,7 +147,7 @@ TEST(etcpal_cpp_uuid, generates_v1_correctly)
   // 1.
   TEST_ASSERT_EQUAL_UINT8((v1.get().data[6] & 0xf0u), 0x10u);
   TEST_ASSERT_EQUAL_UINT8((v1.get().data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL(v1.version(), etcpal::UuidVersion::V1);
+  TEST_ASSERT_EQUAL(v1.version(), etcpal::UuidVersion::kV1);
 }
 
 TEST(etcpal_cpp_uuid, generates_v3_correctly)
@@ -169,11 +169,11 @@ TEST(etcpal_cpp_uuid, generates_v3_correctly)
   TEST_ASSERT_TRUE(ns1_name1 == ns1_name1_dup);
 
   // Make sure the version is correct
-  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::V3);
+  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::kV3);
 
   // Make sure the Variant Version bits are correct.
   // We should always have Variant 1, Version 3.
@@ -203,7 +203,7 @@ TEST(etcpal_cpp_uuid, generates_v4_correctly)
   // 4.
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[6] & 0xf0u), 0x40u);
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL(v4.version(), etcpal::UuidVersion::V4);
+  TEST_ASSERT_EQUAL(v4.version(), etcpal::UuidVersion::kV4);
 }
 
 TEST(etcpal_cpp_uuid, generates_v5_correctly)
@@ -225,11 +225,11 @@ TEST(etcpal_cpp_uuid, generates_v5_correctly)
   TEST_ASSERT_TRUE(ns1_name1 == ns1_name1_dup);
 
   // Make sure the version is correct
-  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::V5);
+  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::kV5);
 
   // Make sure the Variant Version bits are correct.
   // We should always have Variant 1, Version 5.

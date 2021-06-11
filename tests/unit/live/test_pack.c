@@ -38,7 +38,7 @@ uint8_t test_buf[100];
 
 static void test_packi16b(uint8_t* buffer, const char* error_msg)
 {
-  const int16_t  tst = 0x8765;
+  const int16_t  tst = 0x5678;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int16_t));
 
@@ -49,7 +49,7 @@ static void test_packi16b(uint8_t* buffer, const char* error_msg)
 
 static void test_packi16l(uint8_t* buffer, const char* error_msg)
 {
-  const int16_t  tst = 0x8765;
+  const int16_t  tst = 0x5678;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int16_t));
 
@@ -60,7 +60,7 @@ static void test_packi16l(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacki16b(uint8_t* buffer, const char* error_msg)
 {
-  const int16_t tst = 0x8765;
+  const int16_t tst = 0x5678;
   memset(buffer, 0, sizeof(int16_t));
 
   etcpal_pack_i16b(buffer, tst);
@@ -70,7 +70,7 @@ static void test_unpacki16b(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacki16l(uint8_t* buffer, const char* error_msg)
 {
-  const int16_t tst = 0x8765;
+  const int16_t tst = 0x5678;
   memset(buffer, 0, sizeof(int16_t));
 
   etcpal_pack_i16l(buffer, tst);
@@ -122,7 +122,7 @@ static void test_unpacku16l(uint8_t* buffer, const char* error_msg)
 
 static void test_packi32b(uint8_t* buffer, const char* error_msg)
 {
-  const int32_t  tst = 0x87654321;
+  const int32_t  tst = 0x12345678;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int32_t));
 
@@ -135,7 +135,7 @@ static void test_packi32b(uint8_t* buffer, const char* error_msg)
 
 static void test_packi32l(uint8_t* buffer, const char* error_msg)
 {
-  const int32_t  tst = 0x87654321;
+  const int32_t  tst = 0x12345678;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int32_t));
 
@@ -148,7 +148,7 @@ static void test_packi32l(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacki32b(uint8_t* buffer, const char* error_msg)
 {
-  const int32_t tst = 0x87654321;
+  const int32_t tst = 0x12345678;
   memset(buffer, 0, sizeof(int32_t));
 
   etcpal_pack_i32b(buffer, tst);
@@ -158,7 +158,7 @@ static void test_unpacki32b(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacki32l(uint8_t* buffer, const char* error_msg)
 {
-  const int32_t tst = 0x87654321;
+  const int32_t tst = 0x12345678;
   memset(buffer, 0, sizeof(int32_t));
 
   etcpal_pack_i32l(buffer, tst);
@@ -168,7 +168,7 @@ static void test_unpacki32l(uint8_t* buffer, const char* error_msg)
 
 static void test_packu32b(uint8_t* buffer, const char* error_msg)
 {
-  const uint32_t tst = 0x12345678;
+  const uint32_t tst = 0x87654321;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint32_t));
 
@@ -181,7 +181,7 @@ static void test_packu32b(uint8_t* buffer, const char* error_msg)
 
 static void test_packu32l(uint8_t* buffer, const char* error_msg)
 {
-  const uint32_t tst = 0x12345678;
+  const uint32_t tst = 0x87654321;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint32_t));
 
@@ -194,7 +194,7 @@ static void test_packu32l(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacku32b(uint8_t* buffer, const char* error_msg)
 {
-  const uint32_t tst = 0x12345678;
+  const uint32_t tst = 0x87654321;
   memset(buffer, 0, sizeof(uint32_t));
 
   etcpal_pack_u32b(buffer, tst);
@@ -204,7 +204,7 @@ static void test_unpacku32b(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacku32l(uint8_t* buffer, const char* error_msg)
 {
-  const uint32_t tst = 0x12345678;
+  const uint32_t tst = 0x87654321;
   memset(buffer, 0, sizeof(uint32_t));
 
   etcpal_pack_u32l(buffer, tst);
@@ -216,7 +216,7 @@ static void test_unpacku32l(uint8_t* buffer, const char* error_msg)
 
 static void test_packi64b(uint8_t* buffer, const char* error_msg)
 {
-  const int64_t  tst = 0xfedcba9876543210;
+  const int64_t  tst = 0x0123456789abcdef;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int64_t));
 
@@ -233,7 +233,7 @@ static void test_packi64b(uint8_t* buffer, const char* error_msg)
 
 static void test_packi64l(uint8_t* buffer, const char* error_msg)
 {
-  const int64_t  tst = 0xfedcba9876543210;
+  const int64_t  tst = 0x0123456789abcdef;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int64_t));
 
@@ -250,7 +250,7 @@ static void test_packi64l(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacki64b(uint8_t* buffer, const char* error_msg)
 {
-  const int64_t tst = 0xfedcba9876543210;
+  const int64_t tst = 0x0123456789abcdef;
   memset(buffer, 0, sizeof(int64_t));
 
   etcpal_pack_i64b(buffer, tst);
@@ -260,7 +260,7 @@ static void test_unpacki64b(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacki64l(uint8_t* buffer, const char* error_msg)
 {
-  const int64_t tst = 0xfedcba9876543210;
+  const int64_t tst = 0x0123456789abcdef;
   memset(buffer, 0, sizeof(int64_t));
 
   etcpal_pack_i64l(buffer, tst);
@@ -270,7 +270,7 @@ static void test_unpacki64l(uint8_t* buffer, const char* error_msg)
 
 static void test_packu64b(uint8_t* buffer, const char* error_msg)
 {
-  const uint64_t tst = 0x1234567890abcdef;
+  const uint64_t tst = 0xfedcba9876543210;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint64_t));
 
@@ -287,7 +287,7 @@ static void test_packu64b(uint8_t* buffer, const char* error_msg)
 
 static void test_packu64l(uint8_t* buffer, const char* error_msg)
 {
-  const uint64_t tst = 0x1234567890abcdef;
+  const uint64_t tst = 0xfedcba9876543210;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint64_t));
 
@@ -304,7 +304,7 @@ static void test_packu64l(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacku64b(uint8_t* buffer, const char* error_msg)
 {
-  const uint64_t tst = 0x1234567890abcdef;
+  const uint64_t tst = 0xfedcba9876543210;
   memset(buffer, 0, sizeof(uint64_t));
 
   etcpal_pack_u64b(buffer, tst);
@@ -314,7 +314,7 @@ static void test_unpacku64b(uint8_t* buffer, const char* error_msg)
 
 static void test_unpacku64l(uint8_t* buffer, const char* error_msg)
 {
-  const uint64_t tst = 0x1234567890abcdef;
+  const uint64_t tst = 0xfedcba9876543210;
   memset(buffer, 0, sizeof(uint64_t));
 
   etcpal_pack_u64l(buffer, tst);

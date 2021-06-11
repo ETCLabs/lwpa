@@ -457,17 +457,13 @@ Error Thread::Start(Function&& func, Args&&... args)
 /// @return Other codes translated from system error codes are possible.
 inline Error Thread::Join(int timeout_ms) noexcept
 {
-  if (thread_)
-  {
-    Error join_res = etcpal_thread_timed_join(thread_.get(), timeout_ms);
-    if (join_res)
-      thread_.reset();
-    return join_res;
-  }
-  else
-  {
+  if (!thread_)
     return kEtcPalErrInvalid;
-  }
+
+  Error join_res = etcpal_thread_timed_join(thread_.get(), timeout_ms);
+  if (join_res)
+    thread_.reset();
+  return join_res;
 }
 
 /// @brief Forcefully kill the thread.
@@ -481,17 +477,13 @@ inline Error Thread::Join(int timeout_ms) noexcept
 /// @return Other codes translated from system error codes are possible.
 inline Error Thread::Terminate() noexcept
 {
-  if (thread_)
-  {
-    Error terminate_res = etcpal_thread_terminate(thread_.get());
-    if (terminate_res)
-      thread_.reset();
-    return terminate_res;
-  }
-  else
-  {
+  if (!thread_)
     return kEtcPalErrInvalid;
-  }
+
+  Error terminate_res = etcpal_thread_terminate(thread_.get());
+  if (terminate_res)
+    thread_.reset();
+  return terminate_res;
 }
 
 /// @brief Blocks the current thread for the specified number of milliseconds.

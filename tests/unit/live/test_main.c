@@ -18,7 +18,7 @@
  ******************************************************************************/
 
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
 DEFINE_FFF_GLOBALS;
 

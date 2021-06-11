@@ -53,7 +53,7 @@
 #define LEGACY_SYSLOG_TAG_MAX_LEN 35
 
 // clang-format off
-static const char* kLogSeverityStrings[] = {
+static const char* const kLogSeverityStrings[] = {
   "EMRG", // ETCPAL_LOG_EMERG
   "ALRT", // ETCPAL_LOG_ALERT
   "CRIT", // ETCPAL_LOG_CRIT
@@ -64,7 +64,7 @@ static const char* kLogSeverityStrings[] = {
   "DBUG"  // ETCPAL_LOG_DEBUG
 };
 
-static const char* kMonthNames[12] = {
+static const char* const kMonthNames[12] = {
   "Jan",
   "Feb",
   "Mar",

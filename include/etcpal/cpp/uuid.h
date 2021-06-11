@@ -70,12 +70,12 @@ namespace etcpal
 /// Represents a UUID version as defined in RFC 4122.
 enum class UuidVersion
 {
-  V1 = 1,  ///< Version 1 UUID: Date-time and MAC address
-  V2 = 2,  ///< Version 2 UUID: DCE Security version (rarely used)
-  V3 = 3,  ///< Version 3 UUID: Namespace-based, MD5
-  V4 = 4,  ///< Version 4 UUID: Random
-  V5 = 5,  ///< Version 5 UUID: Namespace-based, SHA-1
-  Unknown  ///< Unknown UUID version
+  kV1 = 1,  ///< Version 1 UUID: Date-time and MAC address
+  kV2 = 2,  ///< Version 2 UUID: DCE Security version (rarely used)
+  kV3 = 3,  ///< Version 3 UUID: Namespace-based, MD5
+  kV4 = 4,  ///< Version 4 UUID: Random
+  kV5 = 5,  ///< Version 5 UUID: Namespace-based, SHA-1
+  kUnknown  ///< Unknown UUID version
 };
 
 /// @ingroup etcpal_cpp_uuid
@@ -166,8 +166,7 @@ inline std::string Uuid::ToString() const
   std::array<char, ETCPAL_UUID_STRING_BYTES> str_buf{};
   if (etcpal_uuid_to_string(&uuid_, str_buf.data()))
     return {str_buf.data()};
-  else
-    return {};
+  return {};
 }
 
 /// @brief Check if a UUID is null (all 0's).
@@ -181,7 +180,7 @@ inline bool Uuid::IsNull() const noexcept
 inline UuidVersion Uuid::version() const noexcept
 {
   uint8_t vers_val = uuid_.data[6] >> 4;
-  return (vers_val >= 1 && vers_val <= 5) ? static_cast<UuidVersion>(vers_val) : UuidVersion::Unknown;
+  return (vers_val >= 1 && vers_val <= 5) ? static_cast<UuidVersion>(vers_val) : UuidVersion::kUnknown;
 }
 
 /// @brief Get the time_low portion of a UUID.

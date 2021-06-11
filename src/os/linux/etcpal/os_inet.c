@@ -28,7 +28,7 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
     ETCPAL_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
     return true;
   }
-  else if (os_ip->sa_family == AF_INET6)
+  if (os_ip->sa_family == AF_INET6)
   {
     const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)os_ip;
     ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(ip, sin6->sin6_addr.s6_addr, sin6->sin6_scope_id);
@@ -69,7 +69,7 @@ bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa
       sa->port = ntohs(((const struct sockaddr_in*)os_sa)->sin_port);
       return true;
     }
-    else if (os_sa->sa_family == AF_INET6)
+    if (os_sa->sa_family == AF_INET6)
     {
       sa->port = ntohs(((const struct sockaddr_in6*)os_sa)->sin6_port);
       return true;

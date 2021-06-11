@@ -127,7 +127,7 @@ public:
   constexpr explicit  operator bool() const;
   constexpr bool      operator!() const;
 
-  ETCPAL_CONSTEXPR_14 void SetValue(const ValueType& newValue);
+  ETCPAL_CONSTEXPR_14 void SetValue(const ValueType& new_value);
   ETCPAL_CONSTEXPR_14 void Clear();
 
 private:

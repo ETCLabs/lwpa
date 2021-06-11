@@ -42,18 +42,18 @@ TEST(etcpal_cpp_queue, check_empty)
 TEST(etcpal_cpp_queue, can_send_and_receive)
 {
   etcpal::Queue<unsigned char> q(3);
-  unsigned char                 data = 0xDE;
+  unsigned char                data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
-  unsigned char receivedData = 0;
-  TEST_ASSERT_TRUE(q.Receive(receivedData));
-  TEST_ASSERT_EQUAL(data, receivedData);
+  unsigned char received_data = 0;
+  TEST_ASSERT_TRUE(q.Receive(received_data));
+  TEST_ASSERT_EQUAL(data, received_data);
 }
 
 TEST(etcpal_cpp_queue, will_timeout_on_send)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char> q(3);
-  unsigned char                 data = 0xDE;
+  unsigned char                data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   data = 0xAD;
   TEST_ASSERT_TRUE(q.Send(data));
@@ -73,14 +73,14 @@ TEST(etcpal_cpp_queue, will_timeout_on_receive)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char> q(3);
-  unsigned char       data = 0xDE;
+  unsigned char                data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
-  unsigned char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.Receive(receivedData, 10));
+  unsigned char received_data = 0x00;
+  TEST_ASSERT_TRUE(q.Receive(received_data, 10));
 #if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
-  TEST_ASSERT_FALSE(q.Receive(receivedData, 10));
+  TEST_ASSERT_FALSE(q.Receive(received_data, 10));
 #else
-  TEST_ASSERT_FALSE(q.Receive(receivedData, 0));
+  TEST_ASSERT_FALSE(q.Receive(received_data, 0));
 #endif
 }
 
@@ -94,8 +94,8 @@ TEST(etcpal_cpp_queue, can_detect_empty)
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_FALSE(q.IsEmpty());
 
-  unsigned char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.Receive(receivedData));
+  unsigned char received_data = 0x00;
+  TEST_ASSERT_TRUE(q.Receive(received_data));
   TEST_ASSERT_TRUE(q.IsEmpty());
 
   TEST_ASSERT_TRUE(q.Send(data));
@@ -128,8 +128,8 @@ TEST(etcpal_cpp_queue, can_detect_full)
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_TRUE(q.IsFull());
 
-  unsigned char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.Receive(receivedData));
+  unsigned char received_data = 0x00;
+  TEST_ASSERT_TRUE(q.Receive(received_data));
   TEST_ASSERT_FALSE(q.IsFull());
 
   TEST_ASSERT_TRUE(q.Send(data));
@@ -146,8 +146,8 @@ TEST(etcpal_cpp_queue, can_detect_slots_used)
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_TRUE(q.SlotsUsed() == 1);
 
-  unsigned char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.Receive(receivedData));
+  unsigned char received_data = 0x00;
+  TEST_ASSERT_TRUE(q.Receive(received_data));
   TEST_ASSERT_TRUE(q.SlotsUsed() == 0);
 
   TEST_ASSERT_TRUE(q.Send(data));
@@ -170,8 +170,8 @@ TEST(etcpal_cpp_queue, can_detect_slots_available)
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_TRUE(q.SlotsAvailable() == 0);
 
-  unsigned char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.Receive(receivedData));
+  unsigned char received_data = 0x00;
+  TEST_ASSERT_TRUE(q.Receive(received_data));
   TEST_ASSERT_TRUE(q.SlotsAvailable() == 1);
 }
 

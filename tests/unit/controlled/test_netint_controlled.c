@@ -20,12 +20,12 @@
 #include "etcpal/netint.h"
 #include "etcpal/private/netint.h"
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
-FAKE_VALUE_FUNC(etcpal_error_t, os_enumerate_interfaces, CachedNetintInfo*);
-FAKE_VOID_FUNC(os_free_interfaces, CachedNetintInfo*);
-FAKE_VALUE_FUNC(etcpal_error_t, os_resolve_route, const EtcPalIpAddr*, const CachedNetintInfo*, unsigned int*);
-FAKE_VALUE_FUNC(bool, os_netint_is_up, unsigned int, const CachedNetintInfo*);
+ETC_FAKE_VALUE_FUNC(etcpal_error_t, os_enumerate_interfaces, CachedNetintInfo*);
+ETC_FAKE_VOID_FUNC(os_free_interfaces, CachedNetintInfo*);
+ETC_FAKE_VALUE_FUNC(etcpal_error_t, os_resolve_route, const EtcPalIpAddr*, const CachedNetintInfo*, unsigned int*);
+ETC_FAKE_VALUE_FUNC(bool, os_netint_is_up, unsigned int, const CachedNetintInfo*);
 
 TEST_GROUP(netint_controlled);
 

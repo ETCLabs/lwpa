@@ -61,7 +61,7 @@ typedef struct EtcPalPollSocket
 /* clang-format off */
 
 #define ETCPAL_NUM_SHUT 3
-static const int shutmap[ETCPAL_NUM_SHUT] =
+static const int kShutMap[ETCPAL_NUM_SHUT] =
 {
   SHUT_RD,
   SHUT_WR,
@@ -69,7 +69,7 @@ static const int shutmap[ETCPAL_NUM_SHUT] =
 };
 
 #define ETCPAL_NUM_AF 3
-static const int sfmap[ETCPAL_NUM_AF] =
+static const int kSfMap[ETCPAL_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
@@ -77,14 +77,14 @@ static const int sfmap[ETCPAL_NUM_AF] =
 };
 
 #define ETCPAL_NUM_TYPE 2
-static const int stmap[ETCPAL_NUM_TYPE] =
+static const int kStMap[ETCPAL_NUM_TYPE] =
 {
   SOCK_STREAM,
   SOCK_DGRAM
 };
 
 #define ETCPAL_NUM_AIF 8
-static const int aiflagmap[ETCPAL_NUM_AIF] =
+static const int kAiFlagMap[ETCPAL_NUM_AIF] =
 {
   0,
   AI_PASSIVE,
@@ -96,7 +96,7 @@ static const int aiflagmap[ETCPAL_NUM_AIF] =
   AI_PASSIVE | AI_CANONNAME | AI_NUMERICHOST
 };
 
-static const int aifammap[ETCPAL_NUM_AF] =
+static const int kAiFamMap[ETCPAL_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
@@ -104,7 +104,7 @@ static const int aifammap[ETCPAL_NUM_AF] =
 };
 
 #define ETCPAL_NUM_IPPROTO 6
-static const int aiprotmap[ETCPAL_NUM_IPPROTO] =
+static const int kAiProtMap[ETCPAL_NUM_IPPROTO] =
 {
   0,
   IPPROTO_IP,
@@ -228,6 +228,7 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
   return errno_os_to_etcpal(errno);
 }
 
+// NOLINTNEXTLINE(readability-non-const-parameter)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   /* TODO */
@@ -560,7 +561,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
 {
   if (how >= 0 && how < ETCPAL_NUM_SHUT)
   {
-    int res = shutdown(id, shutmap[how]);
+    int res = shutdown(id, kShutMap[how]);
     return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
   }
   return kEtcPalErrInvalid;
@@ -568,28 +569,24 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
 
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t* id)
 {
-  if (id)
+  if (!id)
+    return kEtcPalErrInvalid;
+
+  if (family >= ETCPAL_NUM_AF || type >= ETCPAL_NUM_TYPE)
   {
-    if (family < ETCPAL_NUM_AF && type < ETCPAL_NUM_TYPE)
-    {
-      int sock = socket(sfmap[family], stmap[type], 0);
-      if (sock != -1)
-      {
-        *id = sock;
-        return kEtcPalErrOk;
-      }
-      else
-      {
-        *id = ETCPAL_SOCKET_INVALID;
-        return errno_os_to_etcpal(errno);
-      }
-    }
-    else
-    {
-      *id = ETCPAL_SOCKET_INVALID;
-    }
+    *id = ETCPAL_SOCKET_INVALID;
+    return kEtcPalErrInvalid;
   }
-  return kEtcPalErrInvalid;
+
+  int sock = socket(kSfMap[family], kStMap[type], 0);
+  if (sock < 0)
+  {
+    *id = ETCPAL_SOCKET_INVALID;
+    return errno_os_to_etcpal(errno);
+  }
+
+  *id = sock;
+  return kEtcPalErrOk;
 }
 
 etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
@@ -604,17 +601,15 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
 
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
 {
-  if (blocking)
-  {
-    int val = fcntl(id, F_GETFL, 0);
-    if (val >= 0)
-    {
-      *blocking = ((val & O_NONBLOCK) == 0);
-      return kEtcPalErrOk;
-    }
+  if (!blocking)
+    return kEtcPalErrInvalid;
+
+  int val = fcntl(id, F_GETFL, 0);
+  if (val < 0)
     return errno_os_to_etcpal(errno);
-  }
-  return kEtcPalErrInvalid;
+
+  *blocking = ((val & O_NONBLOCK) == 0);
+  return kEtcPalErrOk;
 }
 
 etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
@@ -629,10 +624,7 @@ etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
     context->valid = true;
     return kEtcPalErrOk;
   }
-  else
-  {
-    return errno_os_to_etcpal(errno);
-  }
+  return errno_os_to_etcpal(errno);
 }
 
 void etcpal_poll_context_deinit(EtcPalPollContext* context)
@@ -650,48 +642,35 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
                                       etcpal_poll_events_t events,
                                       void*                user_data)
 {
-  if (context && context->valid && socket != ETCPAL_SOCKET_INVALID && (events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
-  {
-    EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)malloc(sizeof(EtcPalPollSocket));
-    if (sock_desc)
-    {
-      sock_desc->sock = socket;
-      sock_desc->events = events;
-      sock_desc->user_data = user_data;
-      etcpal_error_t insert_res = etcpal_rbtree_insert(&context->sockets, sock_desc);
-      if (insert_res == kEtcPalErrOk)
-      {
-        struct epoll_event ep_evt;
-        events_etcpal_to_epoll(events, &ep_evt);
-        ep_evt.data.fd = socket;
-
-        int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_ADD, socket, &ep_evt);
-        if (res == 0)
-        {
-          return kEtcPalErrOk;
-        }
-        else
-        {
-          // Our node dealloc function also deallocates sock_desc, so no need to free it here.
-          etcpal_rbtree_remove(&context->sockets, sock_desc);
-          return errno_os_to_etcpal(errno);
-        }
-      }
-      else
-      {
-        free(sock_desc);
-        return insert_res;
-      }
-    }
-    else
-    {
-      return kEtcPalErrNoMem;
-    }
-  }
-  else
-  {
+  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID || !(events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
     return kEtcPalErrInvalid;
+
+  EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)malloc(sizeof(EtcPalPollSocket));
+  if (!sock_desc)
+    return kEtcPalErrNoMem;
+
+  sock_desc->sock = socket;
+  sock_desc->events = events;
+  sock_desc->user_data = user_data;
+  etcpal_error_t insert_res = etcpal_rbtree_insert(&context->sockets, sock_desc);
+  if (insert_res != kEtcPalErrOk)
+  {
+    free(sock_desc);
+    return insert_res;
   }
+
+  struct epoll_event ep_evt;
+  events_etcpal_to_epoll(events, &ep_evt);
+  ep_evt.data.fd = socket;
+
+  int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_ADD, socket, &ep_evt);
+  if (res != 0)
+  {
+    // Our node dealloc function also deallocates sock_desc, so no need to free it here.
+    etcpal_rbtree_remove(&context->sockets, sock_desc);
+    return errno_os_to_etcpal(errno);
+  }
+  return kEtcPalErrOk;
 }
 
 etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
@@ -699,36 +678,27 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
                                          etcpal_poll_events_t new_events,
                                          void*                new_user_data)
 {
-  if (context && context->valid && socket != ETCPAL_SOCKET_INVALID && (new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
-  {
-    EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
-    if (sock_desc)
-    {
-      struct epoll_event ep_evt;
-      events_etcpal_to_epoll(new_events, &ep_evt);
-      ep_evt.data.fd = socket;
-
-      int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_MOD, socket, &ep_evt);
-      if (res == 0)
-      {
-        sock_desc->events = new_events;
-        sock_desc->user_data = new_user_data;
-        return kEtcPalErrOk;
-      }
-      else
-      {
-        return errno_os_to_etcpal(errno);
-      }
-    }
-    else
-    {
-      return kEtcPalErrNotFound;
-    }
-  }
-  else
+  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID ||
+      !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
   {
     return kEtcPalErrInvalid;
   }
+
+  EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
+  if (!sock_desc)
+    return kEtcPalErrNotFound;
+
+  struct epoll_event ep_evt;
+  events_etcpal_to_epoll(new_events, &ep_evt);
+  ep_evt.data.fd = socket;
+
+  int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_MOD, socket, &ep_evt);
+  if (res != 0)
+    return errno_os_to_etcpal(errno);
+
+  sock_desc->events = new_events;
+  sock_desc->user_data = new_user_data;
+  return kEtcPalErrOk;
 }
 
 void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socket)
@@ -745,61 +715,43 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
 
 etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* event, int timeout_ms)
 {
-  if (context && context->valid && event)
-  {
-    if (etcpal_rbtree_size(&context->sockets) > 0)
-    {
-      int sys_timeout = (timeout_ms == ETCPAL_WAIT_FOREVER ? -1 : timeout_ms);
-
-      struct epoll_event epoll_evt;
-      int                wait_res = epoll_wait(context->epoll_fd, &epoll_evt, 1, sys_timeout);
-      if (wait_res > 0)
-      {
-        EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &epoll_evt.data.fd);
-        if (sock_desc)
-        {
-          event->socket = sock_desc->sock;
-          events_epoll_to_etcpal(&epoll_evt, sock_desc, &event->events);
-          event->err = kEtcPalErrOk;
-          event->user_data = sock_desc->user_data;
-
-          // Check for errors
-          int       error = 0;
-          socklen_t error_size = sizeof error;
-          if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &error, &error_size) == 0)
-          {
-            if (error != 0)
-            {
-              event->events |= ETCPAL_POLL_ERR;
-              event->err = errno_os_to_etcpal(error);
-            }
-          }
-
-          return kEtcPalErrOk;
-        }
-        else
-        {
-          return kEtcPalErrSys;
-        }
-      }
-      else if (wait_res == 0)
-      {
-        return kEtcPalErrTimedOut;
-      }
-      else
-      {
-        return errno_os_to_etcpal(errno);
-      }
-    }
-    else
-    {
-      return kEtcPalErrNoSockets;
-    }
-  }
-  else
-  {
+  if (!context || !context->valid || !event)
     return kEtcPalErrInvalid;
+
+  if (etcpal_rbtree_size(&context->sockets) == 0)
+    return kEtcPalErrNoSockets;
+
+  int sys_timeout = (timeout_ms == ETCPAL_WAIT_FOREVER ? -1 : timeout_ms);
+
+  struct epoll_event epoll_evt;
+  int                wait_res = epoll_wait(context->epoll_fd, &epoll_evt, 1, sys_timeout);
+  if (wait_res == 0)
+    return kEtcPalErrTimedOut;
+  if (wait_res < 0)
+    return errno_os_to_etcpal(errno);
+
+  EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &epoll_evt.data.fd);
+  if (!sock_desc)
+    return kEtcPalErrSys;
+
+  event->socket = sock_desc->sock;
+  events_epoll_to_etcpal(&epoll_evt, sock_desc, &event->events);
+  event->err = kEtcPalErrOk;
+  event->user_data = sock_desc->user_data;
+
+  // Check for errors
+  int       error = 0;
+  socklen_t error_size = sizeof error;
+  if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &error, &error_size) == 0)
+  {
+    if (error != 0)
+    {
+      event->events |= ETCPAL_POLL_ERR;
+      event->err = errno_os_to_etcpal(error);
+    }
   }
+
+  return kEtcPalErrOk;
 }
 
 void events_etcpal_to_epoll(etcpal_poll_events_t events, struct epoll_event* epoll_evt)
@@ -863,18 +815,18 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
   if ((!hostname && !service) || !result)
     return kEtcPalErrInvalid;
 
-  struct addrinfo  pf_hints;
+  struct addrinfo pf_hints;
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
-    pf_hints.ai_family = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
-    pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
-    pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
+    pf_hints.ai_flags = (hints->ai_flags < ETCPAL_NUM_AIF) ? kAiFlagMap[hints->ai_flags] : 0;
+    pf_hints.ai_family = (hints->ai_family < ETCPAL_NUM_AF) ? kAiFamMap[hints->ai_family] : AF_UNSPEC;
+    pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? kStMap[hints->ai_socktype] : 0;
+    pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? kAiProtMap[hints->ai_protocol] : 0;
   }
 
   struct addrinfo* pf_res = NULL;
-  int res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
+  int              res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
   if (res == 0)
   {
     result->pd[0] = pf_res;

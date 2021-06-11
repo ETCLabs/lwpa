@@ -31,18 +31,18 @@
 extern "C" {
 #endif
 
-typedef struct _queue_node
+typedef struct EtcPalQueueNode
 {
   void* data;
-} _queue_node_t;
+} EtcPalQueueNode;
 
 typedef struct
 {
-  unsigned       head;
-  unsigned       tail;
-  _queue_node_t* node_list;
-  size_t         max_queue_size;
-  size_t         queue_size;
+  unsigned         head;
+  unsigned         tail;
+  EtcPalQueueNode* node_list;
+  size_t           max_queue_size;
+  size_t           queue_size;
 
   etcpal_sem_t lock;
   etcpal_sem_t spots_available;
@@ -76,7 +76,6 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id);
 size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id);
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id);
-
 
 #ifdef __cplusplus
 }

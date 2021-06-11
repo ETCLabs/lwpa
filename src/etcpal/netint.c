@@ -134,10 +134,8 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             in
     *netint_arr_size = arr_size;
     return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrNotFound;
-  }
+
+  return kEtcPalErrNotFound;
 }
 
 /**
@@ -167,28 +165,20 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
 
   if (type == kEtcPalIpTypeV4)
   {
-    if (netint_cache.def.v4_valid)
-    {
-      *netint_index = netint_cache.def.v4_index;
-      return kEtcPalErrOk;
-    }
-    else
-    {
+    if (!netint_cache.def.v4_valid)
       return kEtcPalErrNotFound;
-    }
+    *netint_index = netint_cache.def.v4_index;
+    return kEtcPalErrOk;
   }
-  else if (type == kEtcPalIpTypeV6)
+
+  if (type == kEtcPalIpTypeV6)
   {
-    if (netint_cache.def.v6_valid)
-    {
-      *netint_index = netint_cache.def.v6_index;
-      return kEtcPalErrOk;
-    }
-    else
-    {
+    if (!netint_cache.def.v6_valid)
       return kEtcPalErrNotFound;
-    }
+    *netint_index = netint_cache.def.v6_index;
+    return kEtcPalErrOk;
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -236,7 +226,7 @@ int compare_netints(const void* a, const void* b)
  * @return #kEtcPalErrOk: Interfaces refreshed.
  * @return Other error codes from the underlying platform are possible here.
  */
-etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)
+etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)  // NOLINT(readability-non-const-parameter)
 {
   // TODO
   ETCPAL_UNUSED_ARG(list_changed);

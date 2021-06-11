@@ -124,8 +124,9 @@ TEST(etcpal_thread, threads_are_time_sliced)
   params.platform_data = &mqx_params;
 #endif
 
-  etcpal_thread_t spin_task, oneshot_task;
+  etcpal_thread_t spin_task;
   spin_task_run = true;
+  etcpal_thread_t oneshot_task;
   oneshot_task_run = true;
 
   // Create the spin task.

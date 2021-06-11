@@ -27,10 +27,10 @@
 #include "etcpal/cpp/thread.h"
 #include "etcpal/sem.h"
 
-static const unsigned large_prime = 115249;
+static const unsigned kLargePrime = 115249;
 
-bool writer_failure = false;
-bool reader_failure = false;
+static bool writer_failure = false;
+static bool reader_failure = false;
 
 static unsigned num_writes = 0;
 static unsigned num_reads = 0;
@@ -88,7 +88,7 @@ static void writer_func(etcpal::Queue<long long int>& queue)
 {
   for (unsigned i = 0; i < num_writes; i++)
   {
-    if (!queue.Send((i + 1) * large_prime))
+    if (!queue.Send((i + 1) * kLargePrime))
     {
       writer_failure = true;
       break;
@@ -104,7 +104,7 @@ static void reader_func(etcpal::Queue<long long int>& queue)
     if (queue.Receive(val))
     {
       register_value_received(val);
-      if (val == 0 || val % large_prime != 0)
+      if (val == 0 || val % kLargePrime != 0)
       {
         reader_failure = true;
         break;

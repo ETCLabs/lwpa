@@ -1,0 +1,6 @@
+---
+InheritParentConfig: true
+# Must disable readability-inconsistent-declaration-parameter-name because of FFF mocking
+Checks: >
+  -readability-inconsistent-declaration-parameter-name,
+  -readability-magic-numbers

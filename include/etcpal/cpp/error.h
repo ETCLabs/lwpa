@@ -217,7 +217,7 @@ constexpr bool operator!=(const Error& a, const Error& b)
 class BadExpectedAccess : public std::logic_error
 {
 public:
-  explicit BadExpectedAccess(Error res);
+  explicit BadExpectedAccess(Error err);
   Error error() const noexcept;
 
 private:
@@ -290,8 +290,8 @@ private:
   bool has_value_{false};
   union
   {
-    ValueType      value_;
-    etcpal_error_t error_;
+    ValueType      value_;  // NOLINT(readability-identifier-naming)
+    etcpal_error_t error_;  // NOLINT(readability-identifier-naming)
   };
 };
 
@@ -857,7 +857,7 @@ constexpr Error Expected<T>::error() const noexcept
 template <typename T1, typename T2>
 constexpr bool operator==(const Expected<T1>& x, const Expected<T2>& y)
 {
-  return bool(x) != bool(y) ? false : bool(x) == false ? x.error_code() == y.error_code() : *x == *y;
+  return bool(x) != bool(y) ? false : !bool(x) ? x.error_code() == y.error_code() : *x == *y;
 }
 
 template <typename T1, typename T2>

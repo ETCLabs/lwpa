@@ -260,10 +260,7 @@ etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
     rb_node_dealloc(new_node, self);
     return insert_res;
   }
-  else
-  {
-    return kEtcPalErrNoMem;
-  }
+  return kEtcPalErrNoMem;
 }
 
 /**

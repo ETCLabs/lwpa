@@ -85,12 +85,12 @@ namespace etcpal
 
 namespace detail
 {
-enum class enabler
+enum class Enabler
 {
 };
 
 #define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
-#define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
+#define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::Enabler>::type
 
 }  // namespace detail
 

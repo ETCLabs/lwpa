@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   underlying thread API if necessary.
 - etcpal::Thread value constructor now throws std::system_error on failure instead of etcpal::Error
 - EtcPal thread names are now honored on macOS and Linux
+- Enum constant names changed in etcpal::LogDispatchPolicy, IpAddrType, UuidVersion due to linting
+  rules.
 
 ## [0.3.0] - 2020-08-18
 

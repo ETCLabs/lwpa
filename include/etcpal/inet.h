@@ -475,8 +475,7 @@ inline bool operator<(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 {
   if (a.port == b.port)
     return (etcpal_ip_cmp(&a.ip, &b.ip) < 0);
-  else
-    return (a.port < b.port);
+  return (a.port < b.port);
 }
 
 inline bool operator>(const EtcPalSockAddr& a, const EtcPalSockAddr& b)

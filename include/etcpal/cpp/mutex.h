@@ -45,7 +45,7 @@ namespace etcpal
 /// @brief A wrapper class for the EtcPal mutex type.
 ///
 /// Note: The etcpal::Mutex functions are not normally used directly - prefer usage of the RAII
-/// type etcpal::MutexGuard to manage locking and unlocking of an etcpal::Mutex.
+/// type etcpal::MutexGuard to manage locking and Unlocking of an etcpal::Mutex.
 ///
 /// Example usage:
 /// @code
@@ -142,7 +142,7 @@ inline bool Mutex::TryLock(int timeout_ms)
 
 /// @brief Unlock the mutex.
 ///
-/// See etcpal_mutex_unlock().
+/// See etcpal_mutex_Unlock().
 inline void Mutex::Unlock()
 {
   etcpal_mutex_unlock(&mutex_);
@@ -163,7 +163,7 @@ inline etcpal_mutex_t& Mutex::get()
 /// @code
 /// void Class::CriticalFunction()
 /// {
-///   etcpal::MutexGuard lock(mutex_);
+///   etcpal::MutexGuard lock(mutex);
 ///   // Do critical section operations here
 ///
 ///   // Lock is released when it goes out of scope

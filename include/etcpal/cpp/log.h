@@ -202,11 +202,11 @@ public:
 
   /// @brief Define this function to handle log messages and determine what to do with them.
   ///
-  /// If the corresponding Logger has a dispatch policy of LogDispatchPolicy::Direct, this function
+  /// If the corresponding Logger has a dispatch policy of LogDispatchPolicy::kDirect, this function
   /// is invoked directly from the context of the corresponding call to Log() or similar. In this
   /// case, be mindful of whether this function implementation has potential to block. If
   /// significant blocking is a possibility while handling log messages, consider using
-  /// LogDispatchPolicy::Queued.
+  /// LogDispatchPolicy::kQueued.
   ///
   /// @param strings Strings associated with the log message. Will contain valid strings
   ///                corresponding to the log actions requested using Logger::SetLogAction().
@@ -224,8 +224,8 @@ inline LogTimestamp LogMessageHandler::GetLogTimestamp()
 /// @brief Options for the method by which the Logger dispatches log messages.
 enum class LogDispatchPolicy
 {
-  Direct,  ///< Log messages propagate directly from Log() calls to output streams (normally only used for testing)
-  Queued   ///< Log messages are queued and dispatched from another thread (recommended)
+  kDirect,  ///< Log messages propagate directly from Log() calls to output streams (normally only used for testing)
+  kQueued   ///< Log messages are queued and dispatched from another thread (recommended)
 };
 
 /// @ingroup etcpal_cpp_log
@@ -294,7 +294,7 @@ private:
   void LogThreadRun();
   void EmptyLogQueue();
 
-  LogDispatchPolicy dispatch_policy_{LogDispatchPolicy::Queued};
+  LogDispatchPolicy dispatch_policy_{LogDispatchPolicy::kQueued};
   EtcPalLogParams   log_params_{};
 
   struct LogMessage
@@ -345,7 +345,7 @@ inline Logger::Logger()
 
 /// @brief Start logging.
 ///
-/// Spawns a thread to dispatch log messages unless SetDispatchPolicy(LogDispatchPolicy::Direct)
+/// Spawns a thread to dispatch log messages unless SetDispatchPolicy(LogDispatchPolicy::kDirect)
 /// has been called. Do not call more than once between calls to Shutdown().
 ///
 /// @param message_handler The class instance that will handle log messages from this logger.
@@ -362,39 +362,35 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
 
   log_params_.context = &message_handler;
 
-  if (dispatch_policy_ == LogDispatchPolicy::Queued)
-  {
-    // Start the log dispatch thread
-    running_ = true;
-    signal_ = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
-    mutex_ = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
-    if (thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
-    {
-      return true;
-    }
-    else
-    {
-      etcpal_deinit(ETCPAL_FEATURE_LOGGING);
-      return false;
-    }
-  }
-  else
+  if (dispatch_policy_ == LogDispatchPolicy::kDirect)
   {
     running_ = true;
     return true;
   }
+
+  // kQueued
+  // Start the log dispatch thread
+  running_ = true;
+  signal_ = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
+  mutex_ = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
+  if (!thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
+  {
+    etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+    return false;
+  }
+  return true;
 }
 
 /// @brief Stop logging.
 ///
-/// If the dispatch policy is LogDispatchPolicy::Queued (the default) this will dispatch the rest
+/// If the dispatch policy is LogDispatchPolicy::kQueued (the default) this will dispatch the rest
 /// of the log messages and wait for the dispatch thread to join.
 inline void Logger::Shutdown()
 {
   if (running_)
   {
     running_ = false;
-    if (dispatch_policy_ == LogDispatchPolicy::Queued)
+    if (dispatch_policy_ == LogDispatchPolicy::kQueued)
     {
       signal_->Notify();
       thread_.Join();
@@ -636,7 +632,7 @@ inline Logger& Logger::SetSyslogProcId(const std::string& proc_id) noexcept
 
 /// @brief Set the priority of the log dispatch thread.
 /// @see etcpal::Thread::SetPriority()
-/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+/// @note If the dispatch policy is LogDispatchPolicy::kDirect, this has no effect.
 inline Logger& Logger::SetThreadPriority(unsigned int priority) noexcept
 {
   thread_.SetPriority(priority);
@@ -645,7 +641,7 @@ inline Logger& Logger::SetThreadPriority(unsigned int priority) noexcept
 
 /// @brief Set the stack size of the log dispatch thread.
 /// @see etcpal::Thread::SetStackSize()
-/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+/// @note If the dispatch policy is LogDispatchPolicy::kDirect, this has no effect.
 inline Logger& Logger::SetThreadStackSize(unsigned int stack_size) noexcept
 {
   thread_.SetStackSize(stack_size);
@@ -654,7 +650,7 @@ inline Logger& Logger::SetThreadStackSize(unsigned int stack_size) noexcept
 
 /// @brief Set the name of the log dispatch thread.
 /// @see etcpal::Thread::SetName()
-/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+/// @note If the dispatch policy is LogDispatchPolicy::kDirect, this has no effect.
 inline Logger& Logger::SetThreadName(const char* name) noexcept
 {
   thread_.SetName(name);
@@ -663,7 +659,7 @@ inline Logger& Logger::SetThreadName(const char* name) noexcept
 
 /// @brief Set the name of the log dispatch thread.
 /// @see etcpal::Thread::SetName()
-/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+/// @note If the dispatch policy is LogDispatchPolicy::kDirect, this has no effect.
 inline Logger& Logger::SetThreadName(const std::string& name) noexcept
 {
   thread_.SetName(name);
@@ -672,7 +668,7 @@ inline Logger& Logger::SetThreadName(const std::string& name) noexcept
 
 /// @brief Set the platform-specific parameter data of the log dispatch thread.
 /// @see etcpal::Thread::SetPlatformData()
-/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+/// @note If the dispatch policy is LogDispatchPolicy::kDirect, this has no effect.
 inline Logger& Logger::SetThreadPlatformData(void* platform_data) noexcept
 {
   thread_.SetPlatformData(platform_data);
@@ -692,7 +688,7 @@ inline void Logger::LogInternal(int pri, const char* format, std::va_list args)
 {
   if (running_)
   {
-    if (dispatch_policy_ == LogDispatchPolicy::Direct)
+    if (dispatch_policy_ == LogDispatchPolicy::kDirect)
     {
       etcpal_vlog(&log_params_, pri, format, args);
     }

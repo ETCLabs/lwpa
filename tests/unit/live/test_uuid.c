@@ -335,14 +335,18 @@ TEST(etcpal_uuid, generates_correct_device_uuids)
 {
   const uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
   const uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
-  EtcPalUuid    uuid1, uuid2, uuid3, uuid4, uuid1_dup;
 
   // Device UUIDs should be deterministic for the same combination of the three possible input
   // arguments. If any of the arguments is different, a different UUID should result.
+  EtcPalUuid uuid1;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", mac1, 0, &uuid1));
+  EtcPalUuid uuid2;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", mac1, 1, &uuid2));
+  EtcPalUuid uuid3;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Tst Device", mac1, 0, &uuid3));
+  EtcPalUuid uuid4;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", mac2, 0, &uuid4));
+  EtcPalUuid uuid1_dup;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", mac1, 0, &uuid1_dup));
 
   TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid2));

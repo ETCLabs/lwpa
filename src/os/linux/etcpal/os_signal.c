@@ -31,10 +31,7 @@ bool etcpal_signal_create(etcpal_signal_t* id)
         id->signaled = false;
         return true;
       }
-      else
-      {
-        pthread_mutex_destroy(&id->mutex);
-      }
+      pthread_mutex_destroy(&id->mutex);
     }
   }
   return false;

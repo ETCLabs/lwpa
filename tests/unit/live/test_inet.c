@@ -408,18 +408,18 @@ TEST(etcpal_inet, ip_network_portions_equal_works_ipv6)
 }
 
 // For ip/string functions
-char          str[ETCPAL_IP_STRING_BYTES];
-const char*   test_ip4_1 = "0.0.0.0";
-const char*   test_ip4_2 = "255.255.255.255";
-const char*   test_ip4_fail = "256.256.256.256";
-const char*   test_ip6_1 = "::";
-const uint8_t test_ip6_1_bin[ETCPAL_IPV6_BYTES] = {0};
-const char*   test_ip6_2 = "::1";
-const uint8_t test_ip6_2_bin[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-const char*   test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
-const uint8_t test_ip6_3_bin[ETCPAL_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                                   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-const char*   test_ip6_fail = "abcd::ef01::2345";
+static char              str[ETCPAL_IP_STRING_BYTES];
+static const char* const kTestIp41 = "0.0.0.0";
+static const char* const kTestIp42 = "255.255.255.255";
+static const char* const kTestIp4Fail = "256.256.256.256";
+static const char* const kTestIp61 = "::";
+static const uint8_t     kTestIp61Bin[ETCPAL_IPV6_BYTES] = {0};
+static const char* const kTestIp62 = "::1";
+static const uint8_t     kTestIp62Bin[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+static const char* const kTestIp63 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
+static const uint8_t     kTestIp63Bin[ETCPAL_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                                        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+static const char* const kTestIp6Fail = "abcd::ef01::2345";
 
 TEST(etcpal_inet, ip_to_string_conversion_works)
 {
@@ -427,17 +427,17 @@ TEST(etcpal_inet, ip_to_string_conversion_works)
 
   ETCPAL_IP_SET_V4_ADDRESS(&addr, 0);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_ip_to_string(&addr, str));
-  TEST_ASSERT_EQUAL_STRING(str, test_ip4_1);
+  TEST_ASSERT_EQUAL_STRING(str, kTestIp41);
   ETCPAL_IP_SET_V4_ADDRESS(&addr, 0xffffffff);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_ip_to_string(&addr, str));
-  TEST_ASSERT_EQUAL_STRING(str, test_ip4_2);
-  ETCPAL_IP_SET_V6_ADDRESS(&addr, test_ip6_1_bin);
+  TEST_ASSERT_EQUAL_STRING(str, kTestIp42);
+  ETCPAL_IP_SET_V6_ADDRESS(&addr, kTestIp61Bin);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_ip_to_string(&addr, str));
-  TEST_ASSERT_EQUAL_STRING(str, test_ip6_1);
-  ETCPAL_IP_SET_V6_ADDRESS(&addr, test_ip6_2_bin);
+  TEST_ASSERT_EQUAL_STRING(str, kTestIp61);
+  ETCPAL_IP_SET_V6_ADDRESS(&addr, kTestIp62Bin);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_ip_to_string(&addr, str));
-  TEST_ASSERT_EQUAL_STRING(str, test_ip6_2);
-  ETCPAL_IP_SET_V6_ADDRESS(&addr, test_ip6_3_bin);
+  TEST_ASSERT_EQUAL_STRING(str, kTestIp62);
+  ETCPAL_IP_SET_V6_ADDRESS(&addr, kTestIp63Bin);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_ip_to_string(&addr, str));
   TEST_ASSERT((0 == strcmp(str, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")) ||
               (0 == strcmp(str, "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF")));
@@ -447,18 +447,18 @@ TEST(etcpal_inet, string_to_ip_conversion_works)
 {
   EtcPalIpAddr addr;
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV4, test_ip4_1, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV4, kTestIp41, &addr));
   TEST_ASSERT_EQUAL(ETCPAL_IP_V4_ADDRESS(&addr), 0u);
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV4, test_ip4_2, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV4, kTestIp42, &addr));
   TEST_ASSERT_EQUAL(ETCPAL_IP_V4_ADDRESS(&addr), 0xffffffffu);
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV4, test_ip4_fail, &addr));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, test_ip6_1, &addr));
-  TEST_ASSERT_EQUAL(0, memcmp(ETCPAL_IP_V6_ADDRESS(&addr), test_ip6_1_bin, ETCPAL_IPV6_BYTES));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, test_ip6_2, &addr));
-  TEST_ASSERT_EQUAL(0, memcmp(ETCPAL_IP_V6_ADDRESS(&addr), test_ip6_2_bin, ETCPAL_IPV6_BYTES));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, test_ip6_3, &addr));
-  TEST_ASSERT_EQUAL(0, memcmp(ETCPAL_IP_V6_ADDRESS(&addr), test_ip6_3_bin, ETCPAL_IPV6_BYTES));
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, test_ip6_fail, &addr));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV4, kTestIp4Fail, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, kTestIp61, &addr));
+  TEST_ASSERT_EQUAL(0, memcmp(ETCPAL_IP_V6_ADDRESS(&addr), kTestIp61Bin, ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, kTestIp62, &addr));
+  TEST_ASSERT_EQUAL(0, memcmp(ETCPAL_IP_V6_ADDRESS(&addr), kTestIp62Bin, ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, kTestIp63, &addr));
+  TEST_ASSERT_EQUAL(0, memcmp(ETCPAL_IP_V6_ADDRESS(&addr), kTestIp63Bin, ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_string_to_ip(kEtcPalIpTypeV6, kTestIp6Fail, &addr));
 }
 
 TEST(etcpal_inet, mac_is_null_works)

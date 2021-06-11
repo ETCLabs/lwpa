@@ -28,7 +28,7 @@
 
 #include "etcpal/common.h"
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
 // Disable strcpy() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -41,8 +41,8 @@
 #pragma GCC diagnostic ignored "-Wformat-security"
 #endif
 
-FAKE_VOID_FUNC(log_callback, void*, const EtcPalLogStrings*);
-FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimestamp*);
+ETC_FAKE_VOID_FUNC(log_callback, void*, const EtcPalLogStrings*);
+ETC_FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimestamp*);
 
 EtcPalLogTimestamp cur_time;
 EtcPalLogStrings   last_log_strings_received;

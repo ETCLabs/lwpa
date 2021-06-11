@@ -29,10 +29,10 @@ static const char* test_hostname = "www.google.com";
 static const char* test_service = "http";
 #endif
 
-static const char*    test_gai_ip_str = "10.101.1.1";
-static const uint32_t test_gai_ip = 0x0a650101;
-static const char*    test_gai_port_str = "8080";
-static const uint16_t test_gai_port = 8080;
+static const char* const kTestGaiIpStr = "10.101.1.1";
+static const uint32_t    kTestGaiIp = 0x0a650101;
+static const char* const kTestGaiPortStr = "8080";
+static const uint16_t    kTestGaiPort = 8080;
 
 TEST_GROUP(etcpal_socket);
 
@@ -390,10 +390,10 @@ TEST(etcpal_socket, getaddrinfo_works_as_expected)
 #endif
 
   ai_hints.ai_flags = ETCPAL_AI_NUMERICHOST;
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_getaddrinfo(test_gai_ip_str, test_gai_port_str, &ai_hints, &ai));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_getaddrinfo(kTestGaiIpStr, kTestGaiPortStr, &ai_hints, &ai));
   TEST_ASSERT(ETCPAL_IP_IS_V4(&ai.ai_addr.ip));
-  TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&ai.ai_addr.ip), test_gai_ip);
-  TEST_ASSERT_EQUAL_UINT16(ai.ai_addr.port, test_gai_port);
+  TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&ai.ai_addr.ip), kTestGaiIp);
+  TEST_ASSERT_EQUAL_UINT16(ai.ai_addr.port, kTestGaiPort);
   etcpal_freeaddrinfo(&ai);
 }
 
