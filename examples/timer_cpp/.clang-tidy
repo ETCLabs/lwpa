@@ -1,5 +1,16 @@
 ---
 InheritParentConfig: true
+# The examples demonstrate some C++14 features, so we need to turn off some C++14-specific checks.
+# Some checks are repeated from the root config, because Clang Tidy seems to be a bit buggy when
+# combining the lists of checks.
+Checks: >
+  modernize-*,
+  -modernize-deprecated-headers,
+  -modernize-use-trailing-return-type,
+  -modernize-use-using,
+  -modernize-make-unique,
+  readability-*,
+  -readability-magic-numbers
 CheckOptions:
   - { key: readability-identifier-naming.FunctionCase, value: CamelCase  }
 ...
